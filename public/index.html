@@ -1,60 +1,500 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diabetes Risk Screening Tool</title>
+  <title>DiabetesIQ — Type 2 Diabetes Risk Screening</title>
+  <meta name="description"
+    content="An AI-powered Type 2 diabetes risk screening tool using logistic regression on BRFSS-derived predictors. Estimate your risk in seconds." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <div class="container">
-    <h1>Diabetes Risk Screening Tool</h1>
-    <p class="subtitle">Answer a few questions to estimate your diabetes risk.</p>
 
-    <form id="riskForm" novalidate>
-      <div class="form-group">
-        <label for="age">Age (years)</label>
-        <input type="number" id="age" name="age" min="1" max="120" placeholder="e.g. 45" required />
-      </div>
+  <!-- Ambient background orbs -->
+  <div class="bg-orb bg-orb--1" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb--2" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb--3" aria-hidden="true"></div>
 
-      <div class="form-group">
-        <label for="bmi">BMI (kg/m²)</label>
-        <input type="number" id="bmi" name="bmi" min="10" max="70" step="0.1" placeholder="e.g. 27.5" required />
-      </div>
-
-      <div class="form-group">
-        <label>Do you have hypertension?</label>
-        <div class="radio-group">
-          <label><input type="radio" name="hypertension" value="true" required /> Yes</label>
-          <label><input type="radio" name="hypertension" value="false" /> No</label>
+  <!-- Top navigation bar -->
+  <header class="top-bar" id="topBar">
+    <div class="top-bar__inner">
+      <div class="top-bar__brand">
+        <div class="top-bar__logo" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle cx="14" cy="14" r="13" stroke="url(#logoGrad)" stroke-width="2" />
+            <path d="M9 14.5C9 11.5 11.5 9 14.5 9C17 9 19 11 19 13.5C19 16.5 16.5 19.5 14 19.5C11.5 19.5 9 17.5 9 14.5Z"
+              fill="url(#logoGrad)" opacity="0.8" />
+            <circle cx="14" cy="14" r="3" fill="#0F172A" />
+            <defs>
+              <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28">
+                <stop stop-color="#38bdf8" />
+                <stop offset="1" stop-color="#818cf8" />
+              </linearGradient>
+            </defs>
+          </svg>
         </div>
+        <span class="top-bar__title">Diabetes<span class="top-bar__title--accent">IQ</span></span>
       </div>
-
-      <div class="form-group">
-        <label>Are you physically active?</label>
-        <div class="radio-group">
-          <label><input type="radio" name="physicalActivity" value="true" required /> Yes</label>
-          <label><input type="radio" name="physicalActivity" value="false" /> No</label>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="sleepHours">Average sleep hours per night</label>
-        <input type="number" id="sleepHours" name="sleepHours" min="1" max="24" step="0.5" placeholder="e.g. 7" required />
-      </div>
-
-      <button type="submit">Estimate Risk</button>
-    </form>
-
-    <div id="result" class="result hidden" aria-live="polite">
-      <h2>Your Result</h2>
-      <p>Estimated probability: <strong id="probability"></strong></p>
-      <p>Risk category: <strong id="riskCategory"></strong></p>
+      <nav class="top-bar__nav">
+        <span class="top-bar__badge">Prototype v1.0</span>
+        <span class="top-bar__badge top-bar__badge--model">Logistic Regression</span>
+      </nav>
     </div>
+  </header>
 
-    <div id="error" class="error hidden" aria-live="polite"></div>
-  </div>
+  <main class="main-layout">
+
+    <!-- Left: Hero / Info panel -->
+    <section class="hero-panel" id="heroPanel">
+      <div class="hero-panel__inner">
+        <p class="hero-panel__eyebrow">Gillings Datathon 2026</p>
+        <h1 class="hero-panel__heading">
+          AI-Powered<br /> Type&nbsp;2 Diabetes<br /> Risk Screening
+        </h1>
+        <p class="hero-panel__desc">
+          This tool uses a logistic regression model trained on BRFSS-derived health indicators to estimate individual
+          risk for <strong>Type 2 diabetes</strong>. Enter patient data to receive an instant probability score,
+          an interpretable risk breakdown, and evidence-based next steps.
+        </p>
+        <div class="hero-panel__stats">
+          <div class="stat-chip">
+            <span class="stat-chip__number">5</span>
+            <span class="stat-chip__label">Predictors</span>
+          </div>
+          <div class="stat-chip">
+            <span class="stat-chip__number">LR</span>
+            <span class="stat-chip__label">Model Type</span>
+          </div>
+          <div class="stat-chip">
+            <span class="stat-chip__number">BRFSS</span>
+            <span class="stat-chip__label">Data Source</span>
+          </div>
+        </div>
+        <div class="hero-panel__disclaimer">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path
+              d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm-.75 4a.75.75 0 0 1 1.5 0v3.5a.75.75 0 0 1-1.5 0V5ZM8 11.5A.75.75 0 1 1 8 10a.75.75 0 0 1 0 1.5Z" />
+          </svg>
+          <span>For research and demonstration purposes only. This tool screens for <strong>Type&nbsp;2 diabetes risk
+              only</strong> and is not intended as medical advice. An A1C or fasting glucose test from a healthcare
+            provider is needed for clinical diagnosis.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right: Form + Results -->
+    <section class="tool-panel" id="toolPanel">
+
+      <div class="card card--form" id="formCard">
+        <div class="card__header">
+          <div class="card__header-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5" />
+              <path d="M6 7h8M6 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </div>
+          <h2 class="card__title">Patient Data Input</h2>
+        </div>
+
+        <form id="riskForm" novalidate autocomplete="off">
+          <div class="form-row">
+            <div class="form-group" id="formGroupAge">
+              <label for="age">Age <span class="form-group__unit">(years)</span></label>
+              <input type="number" id="age" name="age" min="1" max="120" required />
+            </div>
+            <div class="form-group" id="formGroupWeight">
+              <label for="weightLbs">Weight <span class="form-group__unit">(lbs)</span></label>
+              <input type="number" id="weightLbs" name="weightLbs" min="50" max="700" required />
+            </div>
+          </div>
+
+          <div class="form-row form-row--height">
+            <div class="form-group" id="formGroupHeightFt">
+              <label for="heightFt">Height <span class="form-group__unit">(ft)</span></label>
+              <input type="number" id="heightFt" name="heightFt" min="3" max="8" required />
+            </div>
+            <div class="form-group" id="formGroupHeightIn">
+              <label for="heightIn"><span class="form-group__unit">(in)</span></label>
+              <input type="number" id="heightIn" name="heightIn" min="0" max="11" required />
+            </div>
+            <div class="bmi-preview" id="bmiPreview" aria-live="polite">
+              <span class="bmi-preview__label">BMI</span>
+              <span class="bmi-preview__value" id="bmiValue">—</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" id="formGroupSleep">
+              <label for="sleepHours">Average Sleep <span class="form-group__unit">(hrs)</span></label>
+              <input type="number" id="sleepHours" name="sleepHours" min="1" max="24" step="0.5" required />
+            </div>
+            <div class="form-group" id="formGroupZip">
+              <label for="zipCode">ZIP Code <span class="form-group__unit">(Optional)</span></label>
+              <input type="text" id="zipCode" name="zipCode" maxlength="5" pattern="\d{5}" inputmode="numeric" />
+            </div>
+          </div>
+          <div class="form-row form-row--toggles">
+            <div class="form-group form-group--toggle" id="formGroupHighBP">
+              <label>High Blood Pressure <br><small>(HighBP)</small></label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="HighBP" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="HighBP" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-group form-group--toggle" id="formGroupHighChol">
+              <label>High Cholesterol <br><small>(HighChol)</small></label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="HighChol" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="HighChol" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row form-row--toggles">
+            <div class="form-group form-group--toggle" id="formGroupCholCheck">
+              <label>Cholesterol Check <br><small>(Last 5 yrs)</small></label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="CholCheck" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="CholCheck" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-group form-group--toggle" id="formGroupSmoker">
+              <label>Smoker <br><small>(≥100 cigs in life)</small></label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="Smoker" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="Smoker" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row form-row--toggles">
+            <div class="form-group form-group--toggle" id="formGroupStroke">
+              <label>Ever had a stroke?</label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="Stroke" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="Stroke" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-group form-group--toggle" id="formGroupHeartDisease">
+              <label>Heart Disease / Attack</label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="HeartDiseaseorAttack" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="HeartDiseaseorAttack" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row form-row--toggles">
+            <div class="form-group form-group--toggle" id="formGroupPhysActivity">
+              <label>Physically Active <br><small>(Past 30 days)</small></label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="PhysActivity" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="PhysActivity" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-group form-group--toggle" id="formGroupFruits">
+              <label>Consume Fruits <br><small>(≥1 / day)</small></label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="Fruits" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="Fruits" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row form-row--toggles">
+            <div class="form-group form-group--toggle" id="formGroupVeggies">
+              <label>Consume Veggies <br><small>(≥1 / day)</small></label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="Veggies" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="Veggies" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-group form-group--toggle" id="formGroupHvyAlcohol">
+              <label>Heavy Drinker</label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="HvyAlcoholConsump" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="HvyAlcoholConsump" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row form-row--toggles">
+            <div class="form-group form-group--toggle" id="formGroupAnyHealthcare">
+              <label>Healthcare Coverage</label>
+              <div class="toggle-group">
+                <label class="toggle-option">
+                  <input type="radio" name="AnyHealthcare" value="true" required />
+                  <span class="toggle-option__label">Yes</span>
+                </label>
+                <label class="toggle-option">
+                  <input type="radio" name="AnyHealthcare" value="false" />
+                  <span class="toggle-option__label">No</span>
+                </label>
+              </div>
+            </div>
+            <!-- Blank div to keep layout balanced -->
+            <div class="form-group form-group--toggle" style="opacity: 0; pointer-events: none;"></div>
+          </div>
+
+          <div class="form-consent">
+            <label class="checkbox-container">
+              <input type="checkbox" id="dataConsent" required>
+              <span class="checkmark"></span>
+              <span class="checkbox-text"><strong>I consent</strong> to share my anonymized data with the CDC for public
+                health surveillance and to improve this AI model.</span>
+            </label>
+            <label class="checkbox-container">
+              <input type="checkbox" id="surveillanceOnly">
+              <span class="checkmark"></span>
+              <span class="checkbox-text"><strong>Surveillance Only:</strong> Submit my data, but do NOT show me my
+                individual risk score.</span>
+            </label>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn-primary">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <span>Run Analysis</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Results card (hidden initially) -->
+      <div id="result" class="card card--result hidden" aria-live="polite">
+        <div class="card__header">
+          <div class="card__header-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5" />
+              <path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+          <h2 class="card__title">Risk Assessment</h2>
+        </div>
+
+        <!-- Gauge -->
+        <div class="gauge-container" id="gaugeContainer">
+          <svg class="gauge-svg" viewBox="0 0 200 120" aria-hidden="true">
+            <defs>
+              <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#34d399" />
+                <stop offset="50%" stop-color="#fbbf24" />
+                <stop offset="100%" stop-color="#f87171" />
+              </linearGradient>
+            </defs>
+            <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.08)"
+              stroke-width="12" stroke-linecap="round" />
+            <path class="gauge-fill" id="gaugeFill" d="M 20 100 A 80 80 0 0 1 180 100" fill="none"
+              stroke="url(#gaugeGradient)" stroke-width="12" stroke-linecap="round" stroke-dasharray="251.327"
+              stroke-dashoffset="251.327" />
+          </svg>
+          <div class="gauge-value" id="gaugeValue">0%</div>
+          <div class="gauge-label">Estimated Probability</div>
+        </div>
+
+        <!-- Risk badge -->
+        <div class="risk-badge" id="riskBadge">
+          <span class="risk-badge__dot" id="riskDot"></span>
+          <span class="risk-badge__text" id="riskCategory">—</span>
+          <span class="risk-badge__sublabel">Risk Level</span>
+        </div>
+
+        <!-- Explainability panel -->
+        <div class="explain-panel" id="explainPanel">
+          <h3 class="explain-panel__title">Factor Contributions</h3>
+          <div class="explain-bars" id="explainBars">
+            <!-- dynamically filled -->
+          </div>
+          <p class="explain-panel__note">
+            Bar lengths represent each factor's contribution to the log-odds. Positive values increase predicted risk;
+            negative values decrease it.
+          </p>
+        </div>
+      </div>
+
+      <!-- Thank You card (hidden initially, shown for Surveillance Only mode) -->
+      <div id="thankYouCard" class="card card--result hidden" aria-live="polite">
+        <div class="card__header">
+          <div class="card__header-icon" aria-hidden="true"
+            style="color: var(--accent-green); background: rgba(52, 211, 153, 0.1);">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+          <h2 class="card__title">Data Submitted Successfully</h2>
+        </div>
+        <div style="padding-top: 20px; text-align: center; color: var(--text-secondary); line-height: 1.6;">
+          <p>Thank you for contributing to public health surveillance. Your anonymized data has been securely securely
+            transmitted to the CDC and will help improve future risk models.</p>
+          <p style="margin-top: 10px;">As requested, your individual risk score is not displayed.</p>
+        </div>
+      </div>
+
+      <!-- What-If card (hidden initially) -->
+      <div id="whatIfCard" class="card card--whatif hidden" aria-live="polite">
+        <div class="card__header">
+          <div class="card__header-icon card__header-icon--whatif" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4 14v4h4M4 18L10 12L14 16L20 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+          <h2 class="card__title">"What-If" Scenario Simulator</h2>
+        </div>
+        <p class="whatif-desc">
+          Want to see how lifestyle changes could affect your risk? Adjust the factors below. The risk probability
+          calculates automatically in real-time using the same regression model.
+        </p>
+
+        <div class="whatif-controls" id="whatIfControls"></div>
+
+        <div class="whatif-result">
+          <span class="whatif-result__label">New Simulated Probability:</span>
+          <span class="whatif-result__value" id="whatIfProbValue">—</span>
+          <span class="whatif-result__badge" id="whatIfRiskBadge"></span>
+        </div>
+      </div>
+
+      <!-- Health Insights card (hidden initially) -->
+      <div id="insights" class="card card--insights hidden" aria-live="polite">
+        <div class="card__header">
+          <div class="card__header-icon card__header-icon--insights" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M10 2a5 5 0 0 1 5 5c0 2.05-1.24 3.8-3 4.58V13a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-1.42C6.24 10.8 5 9.05 5 7a5 5 0 0 1 5-5Z"
+                stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+              <path d="M8.5 16h3M9 18h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </div>
+          <h2 class="card__title">Health Insights &amp; Next Steps</h2>
+        </div>
+
+        <!-- Summary message -->
+        <div class="insights-summary" id="insightsSummary"></div>
+
+        <!-- Factor-specific insight cards -->
+        <div class="insights-cards" id="insightsCards"></div>
+
+        <!-- Resources -->
+        <div class="insights-resources" id="insightsResources">
+          <h3 class="insights-resources__title">Community &amp; Screening Resources</h3>
+          <div class="insights-resources__list" id="insightsResourcesList"></div>
+        </div>
+
+        <!-- Nearby Health Centers Finder -->
+        <div class="clinic-finder" id="clinicFinder">
+          <h3 class="clinic-finder__title">🏥 Find Health Centers Near You</h3>
+          <p class="clinic-finder__desc">Federally Qualified Health Centers (FQHCs) offer primary care, screenings, and
+            diabetes services on a sliding fee scale — regardless of insurance status or ability to pay.</p>
+          <div class="clinic-finder__search">
+            <input type="text" id="clinicZip" class="clinic-finder__input" placeholder="Enter ZIP code" maxlength="5"
+              pattern="\d{5}" inputmode="numeric" aria-label="ZIP code for health center search" />
+            <button type="button" id="clinicSearchBtn" class="clinic-finder__btn">Search</button>
+          </div>
+          <div id="clinicResults" class="clinic-results"></div>
+          <p class="clinic-finder__source">Data provided by <a href="https://findahealthcenter.hrsa.gov/"
+              target="_blank" rel="noopener">HRSA Health Center Finder</a></p>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="insights-disclaimer">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path
+              d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm-.75 4a.75.75 0 0 1 1.5 0v3.5a.75.75 0 0 1-1.5 0V5ZM8 11.5A.75.75 0 1 1 8 10a.75.75 0 0 1 0 1.5Z" />
+          </svg>
+          <span><strong>Important:</strong> This tool estimates risk for <strong>Type&nbsp;2 diabetes only</strong>
+            &mdash; it does not assess Type&nbsp;1 diabetes, gestational diabetes, or other forms. Risk scores are
+            generated by a logistic regression model trained on CDC BRFSS survey data and reflect population-level
+            statistical associations; some degree of inaccuracy is inherent in any predictive model. <strong>This is not
+              a clinical diagnosis.</strong> The only way to confirm prediabetes or diabetes is a lab-based test such as
+            an A1C (hemoglobin A1C), fasting plasma glucose, or oral glucose tolerance test, interpreted by a qualified
+            healthcare provider. Please discuss your results with a provider to determine appropriate next steps for
+            your individual situation.</span>
+        </div>
+      </div>
+
+      <!-- Error card -->
+      <div id="error" class="card card--error hidden" aria-live="polite">
+        <div class="card--error__inner">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path
+              d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm-.75 4.5a.75.75 0 0 1 1.5 0V10a.75.75 0 0 1-1.5 0V6.5ZM10 13.5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+          </svg>
+          <span id="errorText"></span>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="footer" id="footer">
+    <span>Built for the Gillings Datathon 2026 &middot; UNC Gillings School of Global Public Health</span>
+  </footer>
 
   <script src="app.js"></script>
 </body>
+
 </html>

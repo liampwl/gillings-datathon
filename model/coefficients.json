@@ -2,7 +2,16 @@
   "intercept": -5.5,
   "age": 0.04,
   "bmi": 0.09,
-  "hypertension": 0.8,
-  "physicalActivity": -0.6,
-  "sleepHours": -0.1
+  "sleepHours": -0.1,
+  "HighBP": 0.8,
+  "HighChol": 0.5,
+  "CholCheck": -0.2,
+  "Smoker": 0.4,
+  "Stroke": 0.5,
+  "HeartDiseaseorAttack": 0.6,
+  "PhysActivity": -0.6,
+  "Fruits": -0.1,
+  "Veggies": -0.1,
+  "HvyAlcoholConsump": 0.2,
+  "AnyHealthcare": -0.3
 }
