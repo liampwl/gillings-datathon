@@ -26,6 +26,38 @@ const thankYouCard = document.getElementById('thankYouCard');
 const surveillanceOnlyCheckbox = document.getElementById('surveillanceOnly');
 const submitBtnSpan = document.querySelector('#submitBtn span');
 
+const themeToggle = document.getElementById('themeToggle');
+const sunIcon = document.querySelector('.sun-icon');
+const moonIcon = document.querySelector('.moon-icon');
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  if (theme === 'dark') {
+    sunIcon.style.display = 'none';
+    moonIcon.style.display = 'block';
+  } else {
+    sunIcon.style.display = 'block';
+    moonIcon.style.display = 'none';
+  }
+}
+
+// Initialize theme
+const savedTheme = localStorage.getItem('theme');
+const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+if (savedTheme) {
+  setTheme(savedTheme);
+} else if (systemPrefersDark) {
+  setTheme('dark');
+} else {
+  setTheme('light');
+}
+
+themeToggle?.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+});
+
 const RISK_CLASSES = ['risk-badge--low', 'risk-badge--moderate', 'risk-badge--high'];
 
 /** Shared coefficients cache — fetched once, used by both explainability bars and insights */
@@ -326,19 +358,28 @@ function buildWhatIfPanel(payload) {
     if (_cachedCoefficients[key] === undefined) continue;
 
     const label = FEATURE_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-    const isBool = payload[key] === 'true' || payload[key] === 'false' || typeof payload[key] === 'boolean';
+    const isNumericInput = ['age', 'bmi', 'sleepHours'].includes(key);
+    const isBool = !isNumericInput && (payload[key] === 'true' || payload[key] === 'false' || typeof payload[key] === 'boolean' || payload[key] === 1 || payload[key] === 0);
 
     const groupDiv = document.createElement('div');
     groupDiv.className = 'whatif-group';
 
     if (isBool) {
-      const currVal = (payload[key] === 'true' || payload[key] === true) ? 1 : 0;
+      const currVal = (payload[key] === 'true' || payload[key] === true || payload[key] === 1) ? 1 : 0;
       groupDiv.innerHTML = `
-        <div class="whatif-group__header">
+        <div class="whatif-group__header" style="margin-bottom: 8px;">
           <span class="whatif-group__label">${label}</span>
-          <span class="whatif-group__value" id="whatif-val-${key}">${currVal ? 'Yes' : 'No'}</span>
         </div>
-        <input type="range" class="whatif-slider" id="whatif-in-${key}" min="0" max="1" step="1" value="${currVal}">
+        <div class="toggle-group">
+          <label class="toggle-option">
+            <input type="radio" name="whatif-${key}" value="1" ${currVal ? 'checked' : ''} />
+            <span class="toggle-option__label">Yes</span>
+          </label>
+          <label class="toggle-option">
+            <input type="radio" name="whatif-${key}" value="0" ${!currVal ? 'checked' : ''} />
+            <span class="toggle-option__label">No</span>
+          </label>
+        </div>
        `;
     } else {
       // Provide sensible min/max overrides based on feature
@@ -359,20 +400,23 @@ function buildWhatIfPanel(payload) {
 
     whatIfControls.appendChild(groupDiv);
 
-    const inputEl = groupDiv.querySelector(`#whatif-in-${key}`);
-    const valEl = groupDiv.querySelector(`#whatif-val-${key}`);
-
-    // Listen for live dragging
-    inputEl.addEventListener('input', (e) => {
-      if (isBool) {
-        currentSimState[key] = e.target.value === '1';
-        valEl.textContent = currentSimState[key] ? 'Yes' : 'No';
-      } else {
+    if (isBool) {
+      const radios = groupDiv.querySelectorAll(`input[type="radio"]`);
+      radios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          currentSimState[key] = e.target.value === '1';
+          updateSimResult();
+        });
+      });
+    } else {
+      const inputEl = groupDiv.querySelector(`#whatif-in-${key}`);
+      const valEl = groupDiv.querySelector(`#whatif-val-${key}`);
+      inputEl.addEventListener('input', (e) => {
         currentSimState[key] = parseFloat(e.target.value);
         valEl.textContent = currentSimState[key];
-      }
-      updateSimResult(); // Recalculate instantly
-    });
+        updateSimResult();
+      });
+    }
   }
 
   updateSimResult(); // Initial UI hydration
@@ -424,8 +468,10 @@ function buildExplainBars(payload) {
 
   if (maxAbs === 0) maxAbs = 1;
 
-  // Sort by absolute contribution
-  const sorted = Object.entries(contributions).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+  // Sort by absolute contribution and filter out zero-effect factors
+  const sorted = Object.entries(contributions)
+    .filter(([_, val]) => Math.abs(val) > 0.0001)
+    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
 
   explainBars.innerHTML = '';
   for (const [key, value] of sorted) {

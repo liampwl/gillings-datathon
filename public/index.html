@@ -6,20 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DiabetesIQ — Type 2 Diabetes Risk Screening</title>
   <meta name="description"
-    content="An AI-powered Type 2 diabetes risk screening tool using logistic regression on BRFSS-derived predictors. Estimate your risk in seconds." />
+    content="An evidence-based Type 2 diabetes risk screening tool using logistic regression on BRFSS-derived predictors. Estimate your risk in seconds." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-  <!-- Ambient background orbs -->
-  <div class="bg-orb bg-orb--1" aria-hidden="true"></div>
-  <div class="bg-orb bg-orb--2" aria-hidden="true"></div>
-  <div class="bg-orb bg-orb--3" aria-hidden="true"></div>
+  <!-- Ambient background orbs removed for clinical feel -->
 
   <!-- Top navigation bar -->
   <header class="top-bar" id="topBar">
@@ -42,6 +40,24 @@
         <span class="top-bar__title">Diabetes<span class="top-bar__title--accent">IQ</span></span>
       </div>
       <nav class="top-bar__nav">
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
         <span class="top-bar__badge">Prototype v1.0</span>
         <span class="top-bar__badge top-bar__badge--model">Logistic Regression</span>
       </nav>
@@ -55,7 +71,7 @@
       <div class="hero-panel__inner">
         <p class="hero-panel__eyebrow">Gillings Datathon 2026</p>
         <h1 class="hero-panel__heading">
-          AI-Powered<br /> Type&nbsp;2 Diabetes<br /> Risk Screening
+          Evidence-Based<br /> Type&nbsp;2 Diabetes<br /> Risk Estimator
         </h1>
         <p class="hero-panel__desc">
           This tool uses a logistic regression model trained on BRFSS-derived health indicators to estimate individual
@@ -63,18 +79,9 @@
           an interpretable risk breakdown, and evidence-based next steps.
         </p>
         <div class="hero-panel__stats">
-          <div class="stat-chip">
-            <span class="stat-chip__number">5</span>
-            <span class="stat-chip__label">Predictors</span>
-          </div>
-          <div class="stat-chip">
-            <span class="stat-chip__number">LR</span>
-            <span class="stat-chip__label">Model Type</span>
-          </div>
-          <div class="stat-chip">
-            <span class="stat-chip__number">BRFSS</span>
-            <span class="stat-chip__label">Data Source</span>
-          </div>
+          <div class="stat-row"><strong>Predictors:</strong> 5</div>
+          <div class="stat-row"><strong>Model:</strong> Logistic Regression</div>
+          <div class="stat-row"><strong>Dataset:</strong> BRFSS</div>
         </div>
         <div class="hero-panel__disclaimer">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -103,206 +110,226 @@
         </div>
 
         <form id="riskForm" novalidate autocomplete="off">
-          <div class="form-row">
-            <div class="form-group" id="formGroupAge">
-              <label for="age">Age <span class="form-group__unit">(years)</span></label>
-              <input type="number" id="age" name="age" min="1" max="120" required />
+          <fieldset class="form-section">
+            <legend class="form-section__title">Demographics & Measurements</legend>
+            <div class="form-row">
+              <div class="form-group" id="formGroupAge">
+                <label for="age">Age <span class="form-group__unit">(years)</span></label>
+                <input type="number" id="age" name="age" min="1" max="120" required />
+              </div>
+              <div class="form-group" id="formGroupWeight">
+                <label for="weightLbs">Weight <span class="form-group__unit">(lbs)</span></label>
+                <input type="number" id="weightLbs" name="weightLbs" min="50" max="700" required />
+              </div>
             </div>
-            <div class="form-group" id="formGroupWeight">
-              <label for="weightLbs">Weight <span class="form-group__unit">(lbs)</span></label>
-              <input type="number" id="weightLbs" name="weightLbs" min="50" max="700" required />
-            </div>
-          </div>
 
-          <div class="form-row form-row--height">
-            <div class="form-group" id="formGroupHeightFt">
-              <label for="heightFt">Height <span class="form-group__unit">(ft)</span></label>
-              <input type="number" id="heightFt" name="heightFt" min="3" max="8" required />
+            <div class="form-row form-row--height">
+              <div class="form-group" id="formGroupHeightFt">
+                <label for="heightFt">Height <span class="form-group__unit">(ft)</span></label>
+                <input type="number" id="heightFt" name="heightFt" min="3" max="8" required />
+              </div>
+              <div class="form-group" id="formGroupHeightIn">
+                <label for="heightIn"><span class="form-group__unit">(in)</span></label>
+                <input type="number" id="heightIn" name="heightIn" min="0" max="11" required />
+              </div>
+              <div class="bmi-preview" id="bmiPreview" aria-live="polite">
+                <span class="bmi-preview__label">BMI</span>
+                <span class="bmi-preview__value" id="bmiValue">—</span>
+              </div>
             </div>
-            <div class="form-group" id="formGroupHeightIn">
-              <label for="heightIn"><span class="form-group__unit">(in)</span></label>
-              <input type="number" id="heightIn" name="heightIn" min="0" max="11" required />
-            </div>
-            <div class="bmi-preview" id="bmiPreview" aria-live="polite">
-              <span class="bmi-preview__label">BMI</span>
-              <span class="bmi-preview__value" id="bmiValue">—</span>
-            </div>
-          </div>
 
-          <div class="form-row">
-            <div class="form-group" id="formGroupSleep">
-              <label for="sleepHours">Average Sleep <span class="form-group__unit">(hrs)</span></label>
-              <input type="number" id="sleepHours" name="sleepHours" min="1" max="24" step="0.5" required />
-            </div>
-            <div class="form-group" id="formGroupZip">
-              <label for="zipCode">ZIP Code <span class="form-group__unit">(Optional)</span></label>
-              <input type="text" id="zipCode" name="zipCode" maxlength="5" pattern="\d{5}" inputmode="numeric" />
-            </div>
-          </div>
-          <div class="form-row form-row--toggles">
-            <div class="form-group form-group--toggle" id="formGroupHighBP">
-              <label>High Blood Pressure <br><small>(HighBP)</small></label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="HighBP" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="HighBP" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
+            <div class="form-row">
+              <div class="form-group" id="formGroupZip">
+                <label for="zipCode">ZIP Code <span class="form-group__unit">(Optional)</span></label>
+                <input type="text" id="zipCode" name="zipCode" maxlength="5" pattern="\d{5}" inputmode="numeric" />
               </div>
             </div>
-            <div class="form-group form-group--toggle" id="formGroupHighChol">
-              <label>High Cholesterol <br><small>(HighChol)</small></label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="HighChol" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="HighChol" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend class="form-section__title">Medical History</legend>
+            <div class="form-row form-row--toggles">
+              <div class="form-group form-group--toggle" id="formGroupHighBP">
+                <label>High Blood Pressure <br><small>(HighBP)</small></label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="HighBP" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="HighBP" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group form-group--toggle" id="formGroupHighChol">
+                <label>High Cholesterol <br><small>(HighChol)</small></label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="HighChol" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="HighChol" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="form-row form-row--toggles">
-            <div class="form-group form-group--toggle" id="formGroupCholCheck">
-              <label>Cholesterol Check <br><small>(Last 5 yrs)</small></label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="CholCheck" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="CholCheck" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
+            <div class="form-row form-row--toggles">
+              <div class="form-group form-group--toggle" id="formGroupCholCheck">
+                <label>Cholesterol Check <br><small>(Last 5 yrs)</small></label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="CholCheck" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="CholCheck" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group form-group--toggle" id="formGroupSmoker">
+                <label>Smoker <br><small>(≥100 cigs in life)</small></label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="Smoker" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="Smoker" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
               </div>
             </div>
-            <div class="form-group form-group--toggle" id="formGroupSmoker">
-              <label>Smoker <br><small>(≥100 cigs in life)</small></label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="Smoker" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="Smoker" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
+
+            <div class="form-row form-row--toggles">
+              <div class="form-group form-group--toggle" id="formGroupStroke">
+                <label>Ever had a stroke?</label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="Stroke" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="Stroke" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group form-group--toggle" id="formGroupHeartDisease">
+                <label>Heart Disease / Attack</label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="HeartDiseaseorAttack" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="HeartDiseaseorAttack" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="form-row form-row--toggles">
-            <div class="form-group form-group--toggle" id="formGroupStroke">
-              <label>Ever had a stroke?</label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="Stroke" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="Stroke" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend class="form-section__title">Lifestyle Assessment</legend>
+            <div class="form-row">
+              <div class="form-group" id="formGroupSleep">
+                <label for="sleepHours">Average Sleep <span class="form-group__unit">(hrs)</span></label>
+                <input type="number" id="sleepHours" name="sleepHours" min="1" max="24" step="0.5" required />
+              </div>
+              <!-- Empty slot for grid balance if needed -->
+              <div class="form-group form-group--toggle" style="opacity: 0; pointer-events: none;"></div>
+            </div>
+            <div class="form-row form-row--toggles">
+              <div class="form-group form-group--toggle" id="formGroupPhysActivity">
+                <label>Physically Active <br><small>(Past 30 days)</small></label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="PhysActivity" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="PhysActivity" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group form-group--toggle" id="formGroupFruits">
+                <label>Consume Fruits <br><small>(≥1 / day)</small></label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="Fruits" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="Fruits" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
               </div>
             </div>
-            <div class="form-group form-group--toggle" id="formGroupHeartDisease">
-              <label>Heart Disease / Attack</label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="HeartDiseaseorAttack" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="HeartDiseaseorAttack" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
+            <div class="form-row form-row--toggles">
+              <div class="form-group form-group--toggle" id="formGroupVeggies">
+                <label>Consume Veggies <br><small>(≥1 / day)</small></label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="Veggies" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="Veggies" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group form-group--toggle" id="formGroupHvyAlcohol">
+                <label>Heavy Drinker</label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="HvyAlcoholConsump" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="HvyAlcoholConsump" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="form-row form-row--toggles">
-            <div class="form-group form-group--toggle" id="formGroupPhysActivity">
-              <label>Physically Active <br><small>(Past 30 days)</small></label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="PhysActivity" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="PhysActivity" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend class="form-section__title">Healthcare Access</legend>
+            <div class="form-row form-row--toggles">
+              <div class="form-group form-group--toggle" id="formGroupAnyHealthcare">
+                <label>Healthcare Coverage</label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="AnyHealthcare" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="AnyHealthcare" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
               </div>
+              <!-- Blank div to keep layout balanced -->
+              <div class="form-group form-group--toggle" style="opacity: 0; pointer-events: none;"></div>
             </div>
-            <div class="form-group form-group--toggle" id="formGroupFruits">
-              <label>Consume Fruits <br><small>(≥1 / day)</small></label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="Fruits" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="Fruits" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="form-row form-row--toggles">
-            <div class="form-group form-group--toggle" id="formGroupVeggies">
-              <label>Consume Veggies <br><small>(≥1 / day)</small></label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="Veggies" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="Veggies" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
-              </div>
-            </div>
-            <div class="form-group form-group--toggle" id="formGroupHvyAlcohol">
-              <label>Heavy Drinker</label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="HvyAlcoholConsump" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="HvyAlcoholConsump" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="form-row form-row--toggles">
-            <div class="form-group form-group--toggle" id="formGroupAnyHealthcare">
-              <label>Healthcare Coverage</label>
-              <div class="toggle-group">
-                <label class="toggle-option">
-                  <input type="radio" name="AnyHealthcare" value="true" required />
-                  <span class="toggle-option__label">Yes</span>
-                </label>
-                <label class="toggle-option">
-                  <input type="radio" name="AnyHealthcare" value="false" />
-                  <span class="toggle-option__label">No</span>
-                </label>
-              </div>
-            </div>
-            <!-- Blank div to keep layout balanced -->
-            <div class="form-group form-group--toggle" style="opacity: 0; pointer-events: none;"></div>
-          </div>
+          </fieldset>
 
           <div class="form-consent">
             <label class="checkbox-container">
               <input type="checkbox" id="dataConsent" required>
               <span class="checkmark"></span>
               <span class="checkbox-text"><strong>I consent</strong> to share my anonymized data with the CDC for public
-                health surveillance and to improve this AI model.</span>
+                health surveillance and to improve this risk model.</span>
             </label>
             <label class="checkbox-container">
               <input type="checkbox" id="surveillanceOnly">
@@ -344,7 +371,7 @@
                 <stop offset="100%" stop-color="#f87171" />
               </linearGradient>
             </defs>
-            <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.08)"
+            <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="var(--border-subtle)"
               stroke-width="12" stroke-linecap="round" />
             <path class="gauge-fill" id="gaugeFill" d="M 20 100 A 80 80 0 0 1 180 100" fill="none"
               stroke="url(#gaugeGradient)" stroke-width="12" stroke-linecap="round" stroke-dasharray="251.327"
@@ -369,7 +396,7 @@
           </div>
           <p class="explain-panel__note">
             Bar lengths represent each factor's contribution to the log-odds. Positive values increase predicted risk;
-            negative values decrease it.
+            negative values decrease it. Factors with no effect on the final score are hidden.
           </p>
         </div>
       </div>
