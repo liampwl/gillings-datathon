@@ -1,0 +1,8 @@
+{
+  "intercept": -5.5,
+  "age": 0.04,
+  "bmi": 0.09,
+  "hypertension": 0.8,
+  "physicalActivity": -0.6,
+  "sleepHours": -0.1
+}
