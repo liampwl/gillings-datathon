@@ -12,7 +12,7 @@
     ],
     "routes": [
         {
-            "src": "/(predict|coefficients|nearby-clinics)",
+            "src": "/(predict|coefficients|nearby-clinics|sdoh)",
             "dest": "/server/index.js"
         },
         {

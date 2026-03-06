@@ -987,10 +987,14 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  background: var(--input-bg);
-  border: 1px solid var(--input-border);
+  background: var(--bg-surface-solid);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   border-left: 4px solid var(--accent-amber);
+  position: sticky;
+  bottom: 24px;
+  z-index: 10;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .whatif-result__label {
