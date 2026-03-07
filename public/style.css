@@ -1,5 +1,5 @@
 /* =========================================================
-   BRFSS 2.0 — Premium Dark Portal Theme
+  BRFSS Insights — Premium Dark Portal Theme
    ========================================================= */
 
 /* --- Reset & Base --- */
@@ -13,12 +13,13 @@
 
 :root {
   /* Institutional Light Palette */
-  --bg-base: #f4f6fy;
+  --bg-base: #f4f6ff;
   /* Very light cool grey */
   --bg-surface: #ffffff;
   --bg-surface-solid: #ffffff;
   --border-subtle: #e2e8f0;
   --border-accent: #bae6fd;
+  --border-hover: #94a3b8;
 
   --text-primary: #1e293b;
   --text-secondary: #475569;
@@ -55,6 +56,7 @@
   --bg-surface-solid: #111827;
   --border-subtle: rgba(148, 163, 184, 0.12);
   --border-accent: rgba(56, 189, 248, 0.3);
+  --border-hover: rgba(148, 163, 184, 0.36);
 
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
@@ -230,56 +232,6 @@ body {
   color: var(--accent-cyan);
   border-color: var(--border-accent);
   background: rgba(56, 189, 248, 0.06);
-}
-
-/* --- Google Translate Overrides --- */
-#google_translate_element {
-  display: flex;
-  align-items: center;
-}
-
-.goog-te-gadget-simple {
-  background-color: transparent !important;
-  border: 1px solid var(--border-subtle) !important;
-  border-radius: var(--radius-sm) !important;
-  padding: 6px 10px !important;
-  font-family: inherit !important;
-  font-size: 0.8rem !important;
-  font-weight: 600 !important;
-  color: var(--text-primary) !important;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex !important;
-  align-items: center;
-}
-
-.goog-te-gadget-simple:hover {
-  background: rgba(148, 163, 184, 0.1) !important;
-  border-color: var(--border-hover) !important;
-}
-
-.goog-te-gadget-simple .goog-te-menu-value {
-  color: var(--text-primary) !important;
-  margin: 0 !important;
-}
-
-.goog-te-gadget-simple .goog-te-menu-value span {
-  color: var(--text-primary) !important;
-  text-decoration: none !important;
-  border-left: none !important;
-}
-
-.goog-te-gadget-icon {
-  display: none !important;
-}
-
-/* Hide the annoying google top banner */
-.goog-te-banner-frame.skiptranslate {
-  display: none !important;
-}
-
-body {
-  top: 0px !important;
 }
 
 /* --- Main Layout --- */
@@ -1795,6 +1747,7 @@ body {
   .top-bar__inner {
     padding: 0 1.25rem;
   }
+
 }
 
 @media (max-width: 500px) {

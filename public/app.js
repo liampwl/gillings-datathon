@@ -23,7 +23,7 @@ const whatIfProbValue = document.getElementById('whatIfProbValue');
 const whatIfRiskBadge = document.getElementById('whatIfRiskBadge');
 
 const thankYouCard = document.getElementById('thankYouCard');
-const surveillanceOnlyCheckbox = document.getElementById('surveillanceOnly');
+const showScoreConsentCheckbox = document.getElementById('showScoreConsent');
 const submitBtnSpan = document.querySelector('#submitBtn span');
 
 const themeToggle = document.getElementById('themeToggle');
@@ -156,15 +156,18 @@ function updateBMIPreview() {
 
 /* ─── Form Submission & Consent UI ─── */
 
-if (surveillanceOnlyCheckbox) {
-  surveillanceOnlyCheckbox.addEventListener('change', (e) => {
-    if (e.target.checked) {
-      submitBtnSpan.textContent = 'Submit Anonymized Data';
-    } else {
-      submitBtnSpan.textContent = 'Run Analysis';
-    }
-  });
+function updateSubmitButtonLabel() {
+  if (!submitBtnSpan) return;
+  submitBtnSpan.textContent = showScoreConsentCheckbox && showScoreConsentCheckbox.checked
+    ? 'Yes, Show My Health Profile'
+    : 'Submit Anonymized Data';
 }
+
+if (showScoreConsentCheckbox) {
+  showScoreConsentCheckbox.addEventListener('change', updateSubmitButtonLabel);
+}
+
+updateSubmitButtonLabel();
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -262,10 +265,10 @@ form.addEventListener('submit', async (event) => {
       searchClinics(); // background fire
     }
 
-    // If user opted for surveillance only, don't show the score
-    const isSurveillanceOnly = surveillanceOnlyCheckbox && surveillanceOnlyCheckbox.checked;
+    // If user did not opt in to seeing their score, only save anonymized data.
+    const optedInToSeeScore = showScoreConsentCheckbox && showScoreConsentCheckbox.checked;
 
-    if (isSurveillanceOnly) {
+    if (!optedInToSeeScore) {
       thankYouCard.classList.remove('hidden');
       return;
     }
@@ -1146,7 +1149,8 @@ async function searchClinics() {
           consentCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
         }
 
-        speak("Thank you. Please review your answers and click Run Risk Estimate to see your results.");
+        const submitLabel = submitBtnSpan ? submitBtnSpan.textContent : 'Submit';
+        speak(`Thank you. Please review your answers and click ${submitLabel} to continue.`);
         stopVoiceGuided();
       }
     } else {

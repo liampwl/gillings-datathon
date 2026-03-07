@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BRFSS 2.0 — Type 2 Diabetes Risk Screening</title>
+  <title>BRFSS Insights — Type 2 Diabetes Risk Screening</title>
   <meta name="description"
     content="An evidence-based Type 2 diabetes risk screening tool using logistic regression on BRFSS-derived predictors. Estimate your risk in seconds." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -80,10 +80,9 @@
             </circle>
           </svg>
         </div>
-        <span class="top-bar__title">BRFSS<span class="top-bar__title--accent">&nbsp;2.0</span></span>
+        <span class="top-bar__title">BRFSS<span class="top-bar__title--accent">&nbsp;Insights</span></span>
       </div>
       <nav class="top-bar__nav">
-        <div id="google_translate_element" class="hide-on-print"></div>
         <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
           <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -433,10 +432,10 @@
                 health surveillance and to improve this risk model.</span>
             </label>
             <label class="checkbox-container">
-              <input type="checkbox" id="surveillanceOnly">
+              <input type="checkbox" id="showScoreConsent">
               <span class="checkmark"></span>
-              <span class="checkbox-text"><strong>Surveillance Only:</strong> Submit my data, but do NOT show me my
-                individual risk score.</span>
+              <span class="checkbox-text"><strong>Show my score:</strong> I consent to seeing my individual risk
+                score and personalized health profile.</span>
             </label>
           </div>
 
@@ -444,7 +443,7 @@
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
               <path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
             </svg>
-            <span>Run Risk Estimate</span>
+            <span>Submit Anonymized Data</span>
           </button>
           <div class="form-submit-hint">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -531,7 +530,7 @@
           <h2 class="card__title">Data Submitted Successfully</h2>
         </div>
         <div style="padding-top: 20px; text-align: center; color: var(--text-secondary); line-height: 1.6;">
-          <p>Thank you for contributing to public health surveillance. Your anonymized data has been securely securely
+          <p>Thank you for contributing to public health surveillance. Your anonymized data has been securely
             transmitted to the CDC and will help improve future risk models.</p>
           <p style="margin-top: 10px;">As requested, your individual risk score is not displayed.</p>
         </div>
@@ -605,7 +604,7 @@
 
         <!-- Questions for your Doctor -->
         <div class="doctor-questions" id="doctorQuestions">
-          <h3 class="doctor-questions__title">🩺 Questions for Your Prompt / PCP</h3>
+          <h3 class="doctor-questions__title">🩺 Questions for Your Provider / PCP</h3>
           <ul class="doctor-questions__list">
             <li>What does my current A1C and fasting blood sugar look like?</li>
             <li>Based on my family history and these factors, how often should I be screened?</li>
@@ -664,19 +663,6 @@
 
   <script src="app.js"></script>
 
-  <!-- Google Translate Machine Translation -->
-  <script type="text/javascript">
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,es',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay: false
-      }, 'google_translate_element');
-    }
-  </script>
-  <script type="text/javascript"
-    src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>
