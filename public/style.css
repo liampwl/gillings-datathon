@@ -110,6 +110,9 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
@@ -117,7 +120,10 @@ body {
   background: var(--bg-base);
   color: var(--text-primary);
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -259,6 +265,15 @@ body {
   gap: 3rem;
   align-items: start;
   min-height: calc(100vh - 56px - 60px);
+}
+
+.top-bar__inner,
+.main-layout,
+.tool-panel,
+.card,
+.form-row,
+.card__header {
+  min-width: 0;
 }
 
 /* --- Hero Panel --- */
@@ -1814,6 +1829,23 @@ body {
   .tool-panel,
   .card {
     width: 100%;
+  }
+
+  .card__header {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .card__header > div {
+    min-width: 0;
+  }
+
+  .card__title {
+    overflow-wrap: anywhere;
+  }
+
+  .btn-voice {
+    margin-left: auto;
   }
 
 }

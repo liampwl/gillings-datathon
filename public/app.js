@@ -83,23 +83,25 @@ async function getCoefficients() {
 const FEATURE_LABELS = {
   age: 'Age',
   bmi: 'BMI',
-  hypertension: 'Hypertension',
-  physicalActivity: 'Physical Activity',
-  sleepHours: 'Sleep Hours',
-  highChol: 'High Cholesterol',
-  genHlth: 'General Health',
-  heartDiseaseOrAttack: 'Heart Disease',
-  hvyAlcoholConsump: 'Heavy Alcohol Use',
-  smoker: 'Smoker',
-  stroke: 'Stroke',
-  fruits: 'Fruit Consumption',
-  veggies: 'Veggie Consumption',
-  diffWalk: 'Difficulty Walking',
-  sex: 'Sex',
-  income: 'Income',
-  education: 'Education',
-  mentHlth: 'Mental Health Days',
-  physHlth: 'Physical Health Days',
+  HighBP: 'High Blood Pressure',
+  HighChol: 'High Cholesterol',
+  CholCheck: 'Cholesterol Check (5Y)',
+  Smoker: 'Smoker',
+  Stroke: 'Stroke',
+  HeartDiseaseorAttack: 'Heart Disease or Attack',
+  PhysActivity: 'Physical Activity',
+  Fruits: 'Fruits',
+  Veggies: 'Veggies',
+  HvyAlcoholConsump: 'Heavy Alcohol Consumption',
+  AnyHealthcare: 'Any Healthcare Coverage',
+  NoDocbcCost: 'Could Not Afford Doctor',
+  GenHlth: 'General Health',
+  MentHlth: 'Mental Health Days',
+  PhysHlth: 'Physical Health Days',
+  DiffWalk: 'Difficulty Walking',
+  Sex: 'Sex',
+  Education: 'Education',
+  Income: 'Income',
 };
 
 /**
@@ -123,6 +125,24 @@ function computeBMI(weightLbs, heightFt, heightIn) {
   const totalInches = heightFt * 12 + heightIn;
   if (totalInches <= 0 || weightLbs <= 0) return null;
   return (weightLbs * 703) / (totalInches * totalInches);
+}
+
+// Age category encoding used by the model: 1=18-24 ... 13=80+
+function ageToCategory(ageYears) {
+  if (!isFinite(ageYears) || ageYears < 18 || ageYears > 120) return null;
+  if (ageYears <= 24) return 1;
+  if (ageYears <= 29) return 2;
+  if (ageYears <= 34) return 3;
+  if (ageYears <= 39) return 4;
+  if (ageYears <= 44) return 5;
+  if (ageYears <= 49) return 6;
+  if (ageYears <= 54) return 7;
+  if (ageYears <= 59) return 8;
+  if (ageYears <= 64) return 9;
+  if (ageYears <= 69) return 10;
+  if (ageYears <= 74) return 11;
+  if (ageYears <= 79) return 12;
+  return 13;
 }
 
 /**
@@ -208,17 +228,20 @@ form.addEventListener('submit', async (event) => {
 
   // Gather inputs
   const age = parseFloat(document.getElementById('age').value);
+  const zipCode = (document.getElementById('zipCode')?.value || '').trim();
   const weightLbs = parseFloat(document.getElementById('weightLbs').value);
   const heightFt = parseFloat(document.getElementById('heightFt').value);
   const heightIn = parseFloat(document.getElementById('heightIn').value) || 0;
-  const sleepHours = parseFloat(document.getElementById('sleepHours').value);
+  const mentHlth = parseInt(document.getElementById('MentHlth').value, 10);
+  const physHlth = parseInt(document.getElementById('PhysHlth').value, 10);
 
   // Fast-path required numeric checks for clearer guidance.
   const numericFields = [
     { id: 'age', label: 'Age', value: age },
     { id: 'weightLbs', label: 'Weight', value: weightLbs },
     { id: 'heightFt', label: 'Height (feet)', value: heightFt },
-    { id: 'sleepHours', label: 'Sleep hours', value: sleepHours },
+    { id: 'MentHlth', label: 'Mental health days', value: mentHlth },
+    { id: 'PhysHlth', label: 'Physical health days', value: physHlth },
   ];
 
   const firstMissingNumeric = numericFields.find((field) => !isFinite(field.value));
@@ -244,19 +267,74 @@ form.addEventListener('submit', async (event) => {
     return;
   }
 
-  // Radio buttons — gather all that exist
+  const ageCategory = ageToCategory(age);
+  if (ageCategory === null) {
+    const ageInput = document.getElementById('age');
+    ageInput?.setAttribute('aria-invalid', 'true');
+    ageInput?.focus();
+    showError('Age must be between 18 and 120 years.');
+    return;
+  }
+
+  if (!Number.isInteger(mentHlth) || mentHlth < 0 || mentHlth > 30) {
+    const mentInput = document.getElementById('MentHlth');
+    mentInput?.setAttribute('aria-invalid', 'true');
+    mentInput?.focus();
+    showError('Mental health days must be an integer from 0 to 30.');
+    return;
+  }
+
+  if (!Number.isInteger(physHlth) || physHlth < 0 || physHlth > 30) {
+    const physInput = document.getElementById('PhysHlth');
+    physInput?.setAttribute('aria-invalid', 'true');
+    physInput?.focus();
+    showError('Physical health days must be an integer from 0 to 30.');
+    return;
+  }
+
+  const genHlth = parseInt(document.getElementById('GenHlth').value, 10);
+  if (!Number.isInteger(genHlth) || genHlth < 1 || genHlth > 5) {
+    const genInput = document.getElementById('GenHlth');
+    genInput?.setAttribute('aria-invalid', 'true');
+    genInput?.focus();
+    showError('General health must be a whole number from 1 to 5.');
+    return;
+  }
+
+  const education = parseInt(document.getElementById('Education').value, 10);
+  if (!Number.isInteger(education) || education < 1 || education > 6) {
+    const eduInput = document.getElementById('Education');
+    eduInput?.setAttribute('aria-invalid', 'true');
+    eduInput?.focus();
+    showError('Education category must be a whole number from 1 to 6.');
+    return;
+  }
+
+  const income = parseInt(document.getElementById('Income').value, 10);
+  if (!Number.isInteger(income) || income < 1 || income > 8) {
+    const incomeInput = document.getElementById('Income');
+    incomeInput?.setAttribute('aria-invalid', 'true');
+    incomeInput?.focus();
+    showError('Income category must be a whole number from 1 to 8.');
+    return;
+  }
+
+  // Binary model fields
   const radioNames = [
     'HighBP', 'HighChol', 'CholCheck', 'Smoker',
     'Stroke', 'HeartDiseaseorAttack', 'PhysActivity',
-    'Fruits', 'Veggies', 'HvyAlcoholConsump', 'AnyHealthcare'
+    'Fruits', 'Veggies', 'HvyAlcoholConsump', 'AnyHealthcare',
+    'NoDocbcCost', 'DiffWalk', 'Sex'
   ];
-  const zipCode = document.getElementById('zipCode').value.trim();
 
   const payload = {
-    age,
+    age: ageCategory,
     bmi: parseFloat(bmi.toFixed(2)),
-    sleepHours,
-    zipCode,
+    GenHlth: genHlth,
+    MentHlth: mentHlth,
+    PhysHlth: physHlth,
+    Education: education,
+    Income: income,
   };
 
   for (const name of radioNames) {
@@ -276,26 +354,17 @@ form.addEventListener('submit', async (event) => {
       }
       return;
     }
-    payload[name] = el.value === 'true' ? 1 : 0;
+    payload[name] = parseInt(el.value, 10);
   }
 
   setSubmitLoading(true);
 
   try {
-    // Fire off both API requests in parallel if there's a ZIP code
-    const fetchPromises = [
-      fetch('/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-    ];
-
-    if (zipCode && /^\d{5}$/.test(zipCode)) {
-      fetchPromises.push(fetch(`/sdoh?zip=${zipCode}`));
-    }
-
-    const [predictRes, sdohRes] = await Promise.all(fetchPromises);
+    const predictRes = await fetch('/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
     const data = await predictRes.json();
 
     if (!predictRes.ok) {
@@ -303,15 +372,10 @@ form.addEventListener('submit', async (event) => {
       return;
     }
 
-    let sdohData = null;
-    if (sdohRes && sdohRes.ok) {
-      sdohData = await sdohRes.json();
-    }
-
-    // Auto-search for nearby clinics if ZIP was perfectly valid
-    if (zipCode && /^\d{5}$/.test(zipCode)) {
+    // ZIP is optional and used only to prefill health-center lookup, never model scoring.
+    if (zipCode && /^\d{5}$/.test(zipCode) && clinicZipInput) {
       clinicZipInput.value = zipCode;
-      searchClinics(); // background fire
+      searchClinics();
     }
 
     // If user did not opt in to seeing their score, only save anonymized data.
@@ -339,10 +403,10 @@ form.addEventListener('submit', async (event) => {
     buildExplainBars(payload);
 
     // Build health insights panel
-    buildInsights(payload, data, sdohData);
+    buildInsights(payload, data, null);
 
     // Build What-If Simulator
-    buildWhatIfPanel(payload);
+    buildWhatIfPanel(payload, { ageYears: age });
 
     resultDiv.classList.remove('hidden');
     insightsDiv.classList.remove('hidden');
@@ -385,10 +449,53 @@ function animateGauge(probability) {
 
 /* ─── What-If Simulator ─── */
 
-function buildWhatIfPanel(payload) {
+function buildWhatIfPanel(payload, originalInputs = {}) {
   if (!_cachedCoefficients) return;
   whatIfControls.innerHTML = '';
   const currentSimState = { ...payload };
+
+  const educationLabels = {
+    1: 'Never attended school or kindergarten only',
+    2: 'Grades 1 through 8',
+    3: 'Grades 9 through 11',
+    4: 'Grade 12 or GED',
+    5: 'College 1 to 3 years',
+    6: 'College 4 years or more',
+  };
+
+  const incomeLabels = {
+    1: 'Less than $10,000',
+    2: '$10,000 to less than $15,000',
+    3: '$15,000 to less than $20,000',
+    4: '$20,000 to less than $25,000',
+    5: '$25,000 to less than $35,000',
+    6: '$35,000 to less than $50,000',
+    7: '$50,000 to less than $75,000',
+    8: '$75,000 or more',
+  };
+
+  const ageCategoryMidpoint = {
+    1: 21,
+    2: 27,
+    3: 32,
+    4: 37,
+    5: 42,
+    6: 47,
+    7: 52,
+    8: 57,
+    9: 62,
+    10: 67,
+    11: 72,
+    12: 77,
+    13: 82,
+  };
+
+  function formatWhatIfValue(key, value) {
+    if (key === 'Education') return educationLabels[Math.round(value)] || String(value);
+    if (key === 'Income') return incomeLabels[Math.round(value)] || String(value);
+    if (key === 'age') return `${Math.round(value)} years`;
+    return value;
+  }
 
   // Helper to re-run the logistic regression with modified values
   const updateSimResult = () => {
@@ -422,7 +529,7 @@ function buildWhatIfPanel(payload) {
     if (_cachedCoefficients[key] === undefined) continue;
 
     const label = FEATURE_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-    const isNumericInput = ['age', 'bmi', 'sleepHours'].includes(key);
+    const isNumericInput = ['age', 'bmi', 'GenHlth', 'MentHlth', 'PhysHlth', 'Education', 'Income'].includes(key);
     const isBool = !isNumericInput && (payload[key] === 'true' || payload[key] === 'false' || typeof payload[key] === 'boolean' || payload[key] === 1 || payload[key] === 0);
 
     const groupDiv = document.createElement('div');
@@ -447,18 +554,30 @@ function buildWhatIfPanel(payload) {
        `;
     } else {
       // Provide sensible min/max overrides based on feature
-      let min = 0, max = 100, step = 1;
-      if (key === 'age') { min = 18; max = 100; step = 1; }
+      let min = 0;
+      let max = 100;
+      let step = 1;
+      let sliderValue = payload[key];
+
+      if (key === 'age') {
+        min = 18;
+        max = 100;
+        step = 1;
+        sliderValue = originalInputs.ageYears || ageCategoryMidpoint[payload.age] || 45;
+      }
       else if (key === 'bmi') { min = 15; max = 55; step = 0.5; }
-      else if (key === 'sleepHours') { min = 2; max = 12; step = 0.5; }
+      else if (key === 'GenHlth') { min = 1; max = 5; step = 1; }
+      else if (key === 'MentHlth' || key === 'PhysHlth') { min = 0; max = 30; step = 1; }
+      else if (key === 'Education') { min = 1; max = 6; step = 1; }
+      else if (key === 'Income') { min = 1; max = 8; step = 1; }
       else { min = payload[key] * 0.5; max = payload[key] * 1.5; step = 0.1; }
 
       groupDiv.innerHTML = `
         <div class="whatif-group__header">
           <span class="whatif-group__label">${label}</span>
-          <span class="whatif-group__value" id="whatif-val-${key}">${payload[key]}</span>
+          <span class="whatif-group__value" id="whatif-val-${key}">${formatWhatIfValue(key, sliderValue)}</span>
         </div>
-        <input type="range" class="whatif-slider" id="whatif-in-${key}" min="${min}" max="${max}" step="${step}" value="${payload[key]}">
+        <input type="range" class="whatif-slider" id="whatif-in-${key}" min="${min}" max="${max}" step="${step}" value="${sliderValue}">
        `;
     }
 
@@ -476,8 +595,13 @@ function buildWhatIfPanel(payload) {
       const inputEl = groupDiv.querySelector(`#whatif-in-${key}`);
       const valEl = groupDiv.querySelector(`#whatif-val-${key}`);
       inputEl.addEventListener('input', (e) => {
-        currentSimState[key] = parseFloat(e.target.value);
-        valEl.textContent = currentSimState[key];
+        const rawVal = parseFloat(e.target.value);
+        if (key === 'age') {
+          currentSimState.age = ageToCategory(rawVal);
+        } else {
+          currentSimState[key] = rawVal;
+        }
+        valEl.textContent = formatWhatIfValue(key, rawVal);
         updateSimResult();
       });
     }
@@ -678,37 +802,7 @@ const FACTOR_INSIGHTS = {
     },
   },
 
-  sleepHours: {
-    icon: '🌙',
-    getContent(hours) {
-      if (hours < 6) {
-        return {
-          title: 'Sleep — Below Recommended Duration',
-          type: 'risk',
-          body: `Averaging <strong>${hours} hours</strong> of sleep per night is below the recommended 7–9 hours for adults. `
-            + 'Research shows that chronic short sleep is associated with impaired glucose metabolism, increased insulin resistance, and elevated appetite hormones — all of which contribute to Type 2 diabetes risk. '
-            + 'Improving sleep hygiene — such as maintaining a consistent schedule, reducing screen time before bed, and creating a dark, cool sleep environment — can help.',
-          source: { text: 'CDC — Sleep & Chronic Disease', url: 'https://www.cdc.gov/sleep/' },
-        };
-      } else if (hours > 9) {
-        return {
-          title: 'Sleep — Above Typical Range',
-          type: 'risk',
-          body: `Averaging <strong>${hours} hours</strong> of sleep per night is above the typical recommended range. `
-            + 'While individual needs vary, consistently long sleep has been associated in some studies with metabolic changes. If you feel unrefreshed despite long sleep, consider discussing this with a healthcare provider to rule out underlying causes.',
-          source: { text: 'NIH — Sleep Health', url: 'https://www.nhlbi.nih.gov/health/sleep' },
-        };
-      }
-      return {
-        title: 'Sleep — Within Recommended Range',
-        type: 'protective',
-        body: `Averaging <strong>${hours} hours</strong> of sleep is within the recommended range. Adequate sleep supports healthy glucose regulation and overall metabolic health.`,
-        source: { text: 'CDC — Sleep Recommendations', url: 'https://www.cdc.gov/sleep/' },
-      };
-    },
-  },
-
-  // ─── Additional BRFSS variables (ready when the modeling team adds them) ───
+  // ─── Additional model variables ───
 
   HighChol: {
     icon: '🩸',
@@ -742,7 +836,7 @@ const FACTOR_INSIGHTS = {
     },
   },
 
-  genHlth: {
+  GenHlth: {
     icon: '📋',
     getContent(val) {
       if (val >= 4) {
@@ -750,14 +844,14 @@ const FACTOR_INSIGHTS = {
           title: 'Self-Reported Health — Fair/Poor',
           type: 'risk',
           body: 'Self-rated general health is a well-established predictor of chronic disease outcomes in public health research. If you feel your overall health could be better, consider connecting with a primary care provider or community health worker who can help identify actionable steps and connect you with local resources.',
-          source: { text: 'CDC — BRFSS Health Status', url: 'https://www.cdc.gov/brfss/' },
+          source: { text: 'CDC — General Health Resources', url: 'https://www.cdc.gov/' },
         };
       }
       return null;
     },
   },
 
-  diffWalk: {
+  DiffWalk: {
     icon: '🦿',
     getContent(val) {
       const hasDiff = val === 'true' || val === true || val === 1;
@@ -826,8 +920,6 @@ const RESOURCES = {
  */
 function buildInsights(payload, result, sdohData) {
   const riskLevel = result.riskCategory; // "Low", "Moderate", "High"
-  const parseBool = (v) => (v === true || v === 'true' || v === 1 ? 1 : 0);
-
   // ─── Summary ───
   let summary = RISK_SUMMARIES[riskLevel] || RISK_SUMMARIES.Moderate;
 
@@ -1012,32 +1104,41 @@ async function searchClinics() {
   if (!progressFill || !progressLabel) return;
 
   // Define all required fields to track
-  const numberFields = ['age', 'weightLbs', 'heightFt', 'heightIn', 'sleepHours'];
-  const radioGroups = [
-    'HighBP', 'HighChol', 'CholCheck', 'Smoker',
-    'Stroke', 'HeartDiseaseorAttack', 'PhysActivity',
-    'Fruits', 'Veggies', 'HvyAlcoholConsump', 'AnyHealthcare'
-  ];
-  const checkboxId = 'dataConsent';
-  const totalFields = numberFields.length + radioGroups.length + 1; // +1 for consent
+  const formEl = document.getElementById('riskForm');
+  if (!formEl) return;
+
+  const requiredElements = Array.from(formEl.querySelectorAll('[required]'));
+  const requiredRadioNames = [...new Set(
+    requiredElements
+      .filter((el) => el.type === 'radio')
+      .map((el) => el.name)
+  )];
+  const nonRadioRequiredIds = requiredElements
+    .filter((el) => el.type !== 'radio')
+    .map((el) => el.id)
+    .filter(Boolean);
+  const totalFields = requiredRadioNames.length + nonRadioRequiredIds.length;
 
   function countCompleted() {
     let count = 0;
 
-    // Number/text inputs — completed if they have a non-empty value
-    for (const id of numberFields) {
+    // Non-radio required inputs
+    for (const id of nonRadioRequiredIds) {
       const el = document.getElementById(id);
-      if (el && el.value.trim() !== '') count++;
+      if (!el) continue;
+      if (el.type === 'checkbox') {
+        if (el.checked) count++;
+      } else if (el.value.trim() !== '') {
+        count++;
+      }
     }
 
-    // Radio groups — completed if any option is selected
-    for (const name of radioGroups) {
-      if (document.querySelector(`input[name="${name}"]:checked`)) count++;
+    // Required radio groups
+    for (const name of requiredRadioNames) {
+      if (document.querySelector(`input[name="${name}"]:checked`)) {
+        count++;
+      }
     }
-
-    // Consent checkbox
-    const consent = document.getElementById(checkboxId);
-    if (consent && consent.checked) count++;
 
     return count;
   }
@@ -1057,11 +1158,8 @@ async function searchClinics() {
   }
 
   // Attach listeners to all form elements
-  const formEl = document.getElementById('riskForm');
-  if (formEl) {
-    formEl.addEventListener('input', updateProgress);
-    formEl.addEventListener('change', updateProgress);
-  }
+  formEl.addEventListener('input', updateProgress);
+  formEl.addEventListener('change', updateProgress);
 
   // Initial state
   updateProgress();
@@ -1100,12 +1198,19 @@ async function searchClinics() {
     { name: 'Smoker', text: "Have you ever smoked at least 100 cigarettes in your lifetime?", type: 'radio' },
     { name: 'Stroke', text: "Have you ever been told you had a stroke?", type: 'radio' },
     { name: 'HeartDiseaseorAttack', text: "Have you ever been told you had a heart attack or coronary heart disease?", type: 'radio' },
-    { id: 'sleepHours', text: "On average, how many hours of sleep do you get in a 24-hour period?", type: 'number' },
-    { name: 'PhysActivity', text: "During the past 30 days, did you participate in any physical activity or exercise?", type: 'radio' },
+    { name: 'PhysActivity', text: "In the past 30 days, did you do any physical activity or exercise outside of work?", type: 'radio' },
     { name: 'Fruits', text: "Do you usually eat fruit at least once per day?", type: 'radio' },
     { name: 'Veggies', text: "Do you usually eat vegetables at least once per day?", type: 'radio' },
     { name: 'HvyAlcoholConsump', text: "Do you participate in heavy drinking based on CDC guidelines?", type: 'radio' },
-    { name: 'AnyHealthcare', text: "Do you currently have any kind of healthcare coverage?", type: 'radio' }
+    { name: 'AnyHealthcare', text: "Do you currently have any kind of healthcare coverage?", type: 'radio' },
+    { name: 'NoDocbcCost', text: "Was there a time in the past 12 months when you needed to see a doctor but could not because of cost?", type: 'radio' },
+    { id: 'GenHlth', text: "How would you rate your general health on a scale from 1 to 5, where 1 is excellent and 5 is poor?", type: 'number' },
+    { id: 'MentHlth', text: "For how many days during the past 30 days was your mental health not good?", type: 'number' },
+    { id: 'PhysHlth', text: "For how many days during the past 30 days was your physical health not good?", type: 'number' },
+    { name: 'DiffWalk', text: "Do you have serious difficulty walking or climbing stairs?", type: 'radio' },
+    { name: 'Sex', text: "Is your sex male?", type: 'radio' },
+    { id: 'Education', text: "What is your education category?", type: 'number' },
+    { id: 'Income', text: "What is your income category?", type: 'number' }
   ];
 
   function speak(text, callback) {
@@ -1155,7 +1260,7 @@ async function searchClinics() {
     let understood = false;
 
     if (currentQ.type === 'number') {
-      if (transcript.includes('skip') && currentQ.optional) {
+      if (currentQ.optional && transcript.includes('skip')) {
         understood = true;
       } else {
         const match = transcript.match(/\d+/);
@@ -1169,14 +1274,14 @@ async function searchClinics() {
       }
     } else if (currentQ.type === 'radio') {
       if (transcript.includes('yes') || transcript.includes('yeah') || transcript.includes('yep')) {
-        const rad = document.querySelector(`input[name="${currentQ.name}"][value="true"]`);
+        const rad = document.querySelector(`input[name="${currentQ.name}"][value="1"]`);
         if (rad) {
           rad.checked = true;
           rad.dispatchEvent(new Event('change', { bubbles: true }));
           understood = true;
         }
       } else if (transcript.includes('no') || transcript.includes('nope') || transcript.includes('nah') || transcript.includes('not')) {
-        const rad = document.querySelector(`input[name="${currentQ.name}"][value="false"]`);
+        const rad = document.querySelector(`input[name="${currentQ.name}"][value="0"]`);
         if (rad) {
           rad.checked = true;
           rad.dispatchEvent(new Event('change', { bubbles: true }));

@@ -55,21 +55,29 @@ A locally hosted Node.js demo application for diabetes risk screening using logi
 
 | Field | Type | Description |
 |------------------|------------------|------------------------------------|
-| `age` | number | Age in years |
-| `bmi` | number | Body Mass Index (kg/m²) |
-| `sleepHours` | number | Average sleep hours per night |
-| `zipCode` | string | 5-digit ZIP code (Optional) |
-| `HighBP` | boolean / string | High Blood Pressure (`true`/`false`) |
-| `HighChol` | boolean / string | High Cholesterol (`true`/`false`) |
-| `CholCheck` | boolean / string | Cholesterol Check in last 5 yrs (`true`/`false`) |
-| `Smoker` | boolean / string | Smoker (≥100 cigs in life) (`true`/`false`) |
-| `Stroke` | boolean / string | Ever had a stroke (`true`/`false`) |
-| `HeartDiseaseorAttack` | boolean / string | Heart Disease / Attack (`true`/`false`) |
-| `PhysActivity` | boolean / string | Physically Active past 30 days (`true`/`false`) |
-| `Fruits` | boolean / string | Consume Fruits ≥1/day (`true`/`false`) |
-| `Veggies` | boolean / string | Consume Veggies ≥1/day (`true`/`false`) |
-| `HvyAlcoholConsump` | boolean / string | Heavy Drinker (`true`/`false`) |
-| `AnyHealthcare` | boolean / string | Healthcare Coverage (`true`/`false`) |
+| `age` | integer | BRFSS age category `1-13` |
+| `bmi` | number | Body Mass Index (calculated from height and weight) |
+| `HighBP` | 0 or 1 | High Blood Pressure |
+| `HighChol` | 0 or 1 | High Cholesterol |
+| `CholCheck` | 0 or 1 | Cholesterol check in last 5 years |
+| `Smoker` | 0 or 1 | Smoked at least 100 cigarettes lifetime |
+| `Stroke` | 0 or 1 | Ever had a stroke |
+| `HeartDiseaseorAttack` | 0 or 1 | Coronary heart disease or myocardial infarction |
+| `PhysActivity` | 0 or 1 | Physical activity in past 30 days |
+| `Fruits` | 0 or 1 | Fruit consumption at least once/day |
+| `Veggies` | 0 or 1 | Vegetable consumption at least once/day |
+| `HvyAlcoholConsump` | 0 or 1 | Heavy alcohol consumption |
+| `AnyHealthcare` | 0 or 1 | Any healthcare coverage |
+| `NoDocbcCost` | 0 or 1 | Could not see doctor due to cost |
+| `GenHlth` | integer | General health `1-5` |
+| `MentHlth` | integer | Mental health not good days `0-30` |
+| `PhysHlth` | integer | Physical health not good days `0-30` |
+| `DiffWalk` | 0 or 1 | Serious difficulty walking/climbing stairs |
+| `Sex` | 0 or 1 | BRFSS encoding used by model |
+| `Education` | integer | BRFSS education category `1-6` |
+| `Income` | integer | BRFSS income category `1-8` |
+
+`zipCode` remains optional in the UI for health-center lookup only and is not sent to `/predict`.
 
 **Response (JSON):**
 
@@ -91,21 +99,28 @@ Edit `model/coefficients.json` to adjust the logistic regression coefficients:
 
 ```json
 {
-  "intercept": -5.5,
-  "age": 0.04,
-  "bmi": 0.09,
-  "sleepHours": -0.1,
-  "HighBP": 0.8,
-  "HighChol": 0.5,
-  "CholCheck": -0.2,
-  "Smoker": 0.4,
-  "Stroke": 0.5,
-  "HeartDiseaseorAttack": 0.6,
-  "PhysActivity": -0.6,
-  "Fruits": -0.1,
-  "Veggies": -0.1,
-  "HvyAlcoholConsump": 0.2,
-  "AnyHealthcare": -0.3
+   "intercept": -6.7216627,
+   "age": 0.1480461,
+   "bmi": 0.0739089,
+   "HighBP": 0.7422317,
+   "HighChol": 0.5790892,
+   "CholCheck": 1.3084764,
+   "Smoker": 0.0149922,
+   "Stroke": 0.1778546,
+   "HeartDiseaseorAttack": 0.2483434,
+   "PhysActivity": -0.0463223,
+   "Fruits": -0.0559529,
+   "Veggies": -0.0392314,
+   "HvyAlcoholConsump": -0.7400404,
+   "AnyHealthcare": 0.0685388,
+   "NoDocbcCost": 0.0159736,
+   "GenHlth": 0.5794343,
+   "MentHlth": -0.0042874,
+   "PhysHlth": -0.0078709,
+   "DiffWalk": 0.0955270,
+   "Sex": 0.2783527,
+   "Education": -0.0375024,
+   "Income": -0.0597731
 }
 ```
 

@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BRFSS Insights — Type 2 Diabetes Risk Screening</title>
+  <title>Type 2 Diabetes Risk Screening</title>
   <meta name="description"
-    content="An evidence-based Type 2 diabetes risk screening tool using logistic regression on BRFSS-derived predictors. Estimate your risk in seconds." />
+    content="A simple Type 2 diabetes risk screening tool. Answer a short set of questions to estimate your risk." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -80,7 +80,7 @@
             </circle>
           </svg>
         </div>
-        <span class="top-bar__title">BRFSS<span class="top-bar__title--accent">&nbsp;Insights</span></span>
+        <span class="top-bar__title">Health<span class="top-bar__title--accent">&nbsp;Insights</span></span>
       </div>
       <nav class="top-bar__nav">
         <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
@@ -125,9 +125,7 @@
             About This Tool
           </h2>
           <p class="hero-panel__desc">
-            This demonstration tool was created using public health survey data from the
-            <strong>Behavioral Risk Factor Surveillance System (BRFSS)</strong>.
-            BRFSS collects information from hundreds of thousands of Americans each year about:
+            This tool estimates your Type 2 diabetes risk using well-established health indicators.
           </p>
           <ul class="hero-panel__list">
             <li>Health behaviors</li>
@@ -135,8 +133,7 @@
             <li>Preventive health care</li>
           </ul>
           <p class="hero-panel__desc">
-            Our model uses selected BRFSS indicators to show how population health data can be translated into
-            meaningful feedback for individuals.
+            Answer a short survey and get a personalized risk estimate with practical next steps.
           </p>
         </div>
 
@@ -239,11 +236,11 @@
                 <label>High blood pressure?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="HighBP" value="true" required />
+                    <input type="radio" name="HighBP" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="HighBP" value="false" />
+                    <input type="radio" name="HighBP" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
@@ -252,11 +249,11 @@
                 <label>High cholesterol?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="HighChol" value="true" required />
+                    <input type="radio" name="HighChol" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="HighChol" value="false" />
+                    <input type="radio" name="HighChol" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
@@ -267,11 +264,11 @@
                 <label>Have you had your cholesterol checked within the past 5 years?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="CholCheck" value="true" required />
+                    <input type="radio" name="CholCheck" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="CholCheck" value="false" />
+                    <input type="radio" name="CholCheck" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
@@ -280,11 +277,11 @@
                 <label>Have you ever smoked at least 100 cigarettes in your lifetime?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="Smoker" value="true" required />
+                    <input type="radio" name="Smoker" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="Smoker" value="false" />
+                    <input type="radio" name="Smoker" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
@@ -303,11 +300,11 @@
                     </svg></span>?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="Stroke" value="true" required />
+                    <input type="radio" name="Stroke" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="Stroke" value="false" />
+                    <input type="radio" name="Stroke" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
@@ -323,11 +320,11 @@
                     </svg></span>?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="HeartDiseaseorAttack" value="true" required />
+                    <input type="radio" name="HeartDiseaseorAttack" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="HeartDiseaseorAttack" value="false" />
+                    <input type="radio" name="HeartDiseaseorAttack" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
@@ -338,19 +335,15 @@
           <fieldset class="form-section">
             <legend class="form-section__title">Lifestyle &amp; Daily Habits</legend>
             <div class="form-row">
-              <div class="form-group" id="formGroupSleep">
-                <label for="sleepHours">On average, how many hours of sleep do you get in a 24-hour period?</label>
-                <input type="number" id="sleepHours" name="sleepHours" min="1" max="24" step="0.5" required />
-              </div>
               <div class="form-group form-group--toggle" id="formGroupFruits">
                 <label>Do you usually eat fruit at least once per day?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="Fruits" value="true" required />
+                    <input type="radio" name="Fruits" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="Fruits" value="false" />
+                    <input type="radio" name="Fruits" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
@@ -362,25 +355,27 @@
                 <label>Do you usually eat vegetables at least once per day?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="Veggies" value="true" required />
+                    <input type="radio" name="Veggies" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="Veggies" value="false" />
+                    <input type="radio" name="Veggies" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
               </div>
+            </div>
+
+            <div class="form-row form-row--full form-row--toggles">
               <div class="form-group form-group--toggle" id="formGroupPhysActivity">
-                <label>During the past 30 days, other than your regular job, did you participate in any physical
-                  activity or exercise such as running, walking, golf, gardening, or swimming?</label>
+                <label>In the past 30 days, did you do any physical activity or exercise outside of work?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="PhysActivity" value="true" required />
+                    <input type="radio" name="PhysActivity" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="PhysActivity" value="false" />
+                    <input type="radio" name="PhysActivity" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
@@ -393,11 +388,11 @@
                   women and 15 or more drinks per week for men. Does this apply to you?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="HvyAlcoholConsump" value="true" required />
+                    <input type="radio" name="HvyAlcoholConsump" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="HvyAlcoholConsump" value="false" />
+                    <input type="radio" name="HvyAlcoholConsump" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
@@ -413,14 +408,111 @@
                   such as HMOs, or government plans such as Medicare?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
-                    <input type="radio" name="AnyHealthcare" value="true" required />
+                    <input type="radio" name="AnyHealthcare" value="1" required />
                     <span class="toggle-option__label">Yes</span>
                   </label>
                   <label class="toggle-option">
-                    <input type="radio" name="AnyHealthcare" value="false" />
+                    <input type="radio" name="AnyHealthcare" value="0" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>
+              </div>
+            </div>
+
+            <div class="form-row form-row--full form-row--toggles">
+              <div class="form-group form-group--toggle" id="formGroupNoDocbcCost">
+                <label>Was there a time in the past 12 months when you needed to see a doctor but could not because of cost?</label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="NoDocbcCost" value="1" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="NoDocbcCost" value="0" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend class="form-section__title">General Health Status</legend>
+            <div class="form-row">
+              <div class="form-group" id="formGroupGenHlth">
+                <label for="GenHlth">How would you rate your general health? (1 = Excellent, 5 = Poor)</label>
+                <input type="number" id="GenHlth" name="GenHlth" min="1" max="5" step="1" required />
+              </div>
+              <div class="form-group" id="formGroupMentHlth">
+                <label for="MentHlth">Now thinking about your mental health, for how many days during the past 30 days was it not good? (0-30)</label>
+                <input type="number" id="MentHlth" name="MentHlth" min="0" max="30" step="1" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group" id="formGroupPhysHlth">
+                <label for="PhysHlth">Now thinking about your physical health, for how many days during the past 30 days was it not good? (0-30)</label>
+                <input type="number" id="PhysHlth" name="PhysHlth" min="0" max="30" step="1" required />
+              </div>
+              <div class="form-group form-group--toggle" id="formGroupDiffWalk">
+                <label>Do you have serious difficulty walking or climbing stairs?</label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="DiffWalk" value="1" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="DiffWalk" value="0" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend class="form-section__title">Demographics</legend>
+            <div class="form-row form-row--toggles">
+              <div class="form-group form-group--toggle" id="formGroupSex">
+                <label>Sex</label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="Sex" value="1" required />
+                    <span class="toggle-option__label">Male</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="Sex" value="0" />
+                    <span class="toggle-option__label">Female</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group" id="formGroupEducation">
+                <label for="Education">What is your education category?</label>
+                <select id="Education" name="Education" required>
+                  <option value="">Select one</option>
+                  <option value="1">1 - Never attended school or kindergarten only</option>
+                  <option value="2">2 - Grades 1 through 8</option>
+                  <option value="3">3 - Grades 9 through 11</option>
+                  <option value="4">4 - Grade 12 or GED</option>
+                  <option value="5">5 - College 1 year to 3 years</option>
+                  <option value="6">6 - College 4 years or more</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group" id="formGroupIncome">
+                <label for="Income">What is your income category?</label>
+                <select id="Income" name="Income" required>
+                  <option value="">Select one</option>
+                  <option value="1">1 - Less than $10,000</option>
+                  <option value="2">2 - $10,000 to less than $15,000</option>
+                  <option value="3">3 - $15,000 to less than $20,000</option>
+                  <option value="4">4 - $20,000 to less than $25,000</option>
+                  <option value="5">5 - $25,000 to less than $35,000</option>
+                  <option value="6">6 - $35,000 to less than $50,000</option>
+                  <option value="7">7 - $50,000 to less than $75,000</option>
+                  <option value="8">8 - $75,000 or more</option>
+                </select>
               </div>
             </div>
           </fieldset>
@@ -461,7 +553,7 @@
           <div class="form-progress__track">
             <div class="form-progress__fill" id="formProgressFill"></div>
           </div>
-          <span class="form-progress__label" id="formProgressLabel">0 of 17 fields</span>
+          <span class="form-progress__label" id="formProgressLabel">0 of required fields</span>
         </div>
       </div>
 
@@ -635,7 +727,7 @@
           </svg>
           <span><strong>Important:</strong> This tool estimates risk for <strong>Type&nbsp;2 diabetes only</strong>
             &mdash; it does not assess Type&nbsp;1 diabetes, gestational diabetes, or other forms. Risk scores are
-            generated by a logistic regression model trained on CDC BRFSS survey data and reflect population-level
+            generated by a logistic regression model trained on public health survey data and reflect population-level
             statistical associations; some degree of inaccuracy is inherent in any predictive model. <strong>This is not
               a clinical diagnosis.</strong> The only way to confirm prediabetes or diabetes is a lab-based test such as
             an A1C (hemoglobin A1C), fasting plasma glucose, or oral glucose tolerance test, interpreted by a qualified
