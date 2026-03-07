@@ -440,8 +440,15 @@
             <legend class="form-section__title">General Health Status</legend>
             <div class="form-row">
               <div class="form-group" id="formGroupGenHlth">
-                <label for="GenHlth">How would you rate your general health? (1 = Excellent, 5 = Poor)</label>
-                <input type="number" id="GenHlth" name="GenHlth" min="1" max="5" step="1" required />
+                <label for="GenHlth">How would you rate your general health?</label>
+                <select id="GenHlth" name="GenHlth" required>
+                  <option value="" selected>Select one</option>
+                  <option value="1">Excellent</option>
+                  <option value="2">Very good</option>
+                  <option value="3">Good</option>
+                  <option value="4">Fair</option>
+                  <option value="5">Poor</option>
+                </select>
               </div>
               <div class="form-group" id="formGroupMentHlth">
                 <label for="MentHlth">Now thinking about your mental health, for how many days during the past 30 days was it not good? (0-30)</label>

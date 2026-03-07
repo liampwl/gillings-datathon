@@ -297,7 +297,7 @@ form.addEventListener('submit', async (event) => {
     const genInput = document.getElementById('GenHlth');
     genInput?.setAttribute('aria-invalid', 'true');
     genInput?.focus();
-    showError('General health must be a whole number from 1 to 5.');
+    showError('Please select your general health.');
     return;
   }
 
@@ -537,6 +537,8 @@ function buildWhatIfPanel(payload, originalInputs = {}) {
 
     if (isBool) {
       const currVal = (payload[key] === 'true' || payload[key] === true || payload[key] === 1) ? 1 : 0;
+      const trueLabel = key === 'Sex' ? 'Male' : 'Yes';
+      const falseLabel = key === 'Sex' ? 'Female' : 'No';
       groupDiv.innerHTML = `
         <div class="whatif-group__header" style="margin-bottom: 8px;">
           <span class="whatif-group__label">${label}</span>
@@ -544,11 +546,11 @@ function buildWhatIfPanel(payload, originalInputs = {}) {
         <div class="toggle-group">
           <label class="toggle-option">
             <input type="radio" name="whatif-${key}" value="1" ${currVal ? 'checked' : ''} />
-            <span class="toggle-option__label">Yes</span>
+            <span class="toggle-option__label">${trueLabel}</span>
           </label>
           <label class="toggle-option">
             <input type="radio" name="whatif-${key}" value="0" ${!currVal ? 'checked' : ''} />
-            <span class="toggle-option__label">No</span>
+            <span class="toggle-option__label">${falseLabel}</span>
           </label>
         </div>
        `;
@@ -1201,7 +1203,7 @@ async function searchClinics() {
     { name: 'HvyAlcoholConsump', text: "Do you participate in heavy drinking based on CDC guidelines?", type: 'radio' },
     { name: 'AnyHealthcare', text: "Do you currently have any kind of healthcare coverage?", type: 'radio' },
     { name: 'NoDocbcCost', text: "Was there a time in the past 12 months when you needed to see a doctor but could not because of cost?", type: 'radio' },
-    { id: 'GenHlth', text: "How would you rate your general health on a scale from 1 to 5, where 1 is excellent and 5 is poor?", type: 'number' },
+    { id: 'GenHlth', text: "How would you rate your general health? Please say 1 for excellent, 2 for very good, 3 for good, 4 for fair, or 5 for poor.", type: 'number' },
     { id: 'MentHlth', text: "For how many days during the past 30 days was your mental health not good?", type: 'number' },
     { id: 'PhysHlth', text: "For how many days during the past 30 days was your physical health not good?", type: 'number' },
     { name: 'DiffWalk', text: "Do you have serious difficulty walking or climbing stairs?", type: 'radio' },
