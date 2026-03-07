@@ -24,6 +24,7 @@ const whatIfRiskBadge = document.getElementById('whatIfRiskBadge');
 
 const thankYouCard = document.getElementById('thankYouCard');
 const showScoreConsentCheckbox = document.getElementById('showScoreConsent');
+const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
 const submitBtnSpan = document.querySelector('#submitBtn span');
 
 const themeToggle = document.getElementById('themeToggle');
@@ -156,8 +157,30 @@ function updateBMIPreview() {
 
 /* ─── Form Submission & Consent UI ─── */
 
+function clearInvalidMarkers() {
+  document.querySelectorAll('.error-highlight').forEach((el) => el.classList.remove('error-highlight'));
+  document.querySelectorAll('[aria-invalid="true"]').forEach((el) => el.setAttribute('aria-invalid', 'false'));
+}
+
+function setSubmitLoading(isLoading) {
+  if (!submitBtn || !submitBtnSpan) return;
+
+  submitBtn.disabled = isLoading;
+  submitBtn.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+
+  if (isLoading) {
+    submitBtn.dataset.loading = 'true';
+    submitBtnSpan.textContent = 'Calculating your profile...';
+  } else {
+    delete submitBtn.dataset.loading;
+    updateSubmitButtonLabel();
+  }
+}
+
 function updateSubmitButtonLabel() {
   if (!submitBtnSpan) return;
+  if (submitBtn && submitBtn.dataset.loading === 'true') return;
+
   submitBtnSpan.textContent = showScoreConsentCheckbox && showScoreConsentCheckbox.checked
     ? 'Yes, Show My Health Profile'
     : 'Submit Anonymized Data';
@@ -180,8 +203,8 @@ form.addEventListener('submit', async (event) => {
   thankYouCard.classList.add('hidden');
   RISK_CLASSES.forEach((cls) => riskBadge.classList.remove(cls));
 
-  // Clear previous highlights
-  document.querySelectorAll('.error-highlight').forEach((el) => el.classList.remove('error-highlight'));
+  // Clear previous validation state
+  clearInvalidMarkers();
 
   // Gather inputs
   const age = parseFloat(document.getElementById('age').value);
@@ -190,9 +213,33 @@ form.addEventListener('submit', async (event) => {
   const heightIn = parseFloat(document.getElementById('heightIn').value) || 0;
   const sleepHours = parseFloat(document.getElementById('sleepHours').value);
 
+  // Fast-path required numeric checks for clearer guidance.
+  const numericFields = [
+    { id: 'age', label: 'Age', value: age },
+    { id: 'weightLbs', label: 'Weight', value: weightLbs },
+    { id: 'heightFt', label: 'Height (feet)', value: heightFt },
+    { id: 'sleepHours', label: 'Sleep hours', value: sleepHours },
+  ];
+
+  const firstMissingNumeric = numericFields.find((field) => !isFinite(field.value));
+  if (firstMissingNumeric) {
+    const fieldEl = document.getElementById(firstMissingNumeric.id);
+    if (fieldEl) {
+      fieldEl.setAttribute('aria-invalid', 'true');
+      fieldEl.focus();
+    }
+    showError(`Please enter a valid value for ${firstMissingNumeric.label}.`);
+    return;
+  }
+
   // Calculate BMI
   const bmi = computeBMI(weightLbs, heightFt, heightIn);
   if (bmi === null || !isFinite(bmi)) {
+    const weightInput = document.getElementById('weightLbs');
+    const heightInput = document.getElementById('heightFt');
+    weightInput?.setAttribute('aria-invalid', 'true');
+    heightInput?.setAttribute('aria-invalid', 'true');
+    weightInput?.focus();
     showError('Please enter valid height and weight to calculate BMI.');
     return;
   }
@@ -221,16 +268,18 @@ form.addEventListener('submit', async (event) => {
         const group = missingInput.closest('.form-group');
         if (group) {
           group.classList.add('error-highlight');
+          group.setAttribute('aria-invalid', 'true');
           group.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+        missingInput.setAttribute('aria-invalid', 'true');
+        missingInput.focus();
       }
       return;
     }
     payload[name] = el.value === 'true' ? 1 : 0;
   }
 
-  const submitBtn = form.querySelector('button[type="submit"]');
-  submitBtn.disabled = true;
+  setSubmitLoading(true);
 
   try {
     // Fire off both API requests in parallel if there's a ZIP code
@@ -301,7 +350,7 @@ form.addEventListener('submit', async (event) => {
   } catch (err) {
     showError('Could not connect to the server. Please ensure the app is running.');
   } finally {
-    submitBtn.disabled = false;
+    setSubmitLoading(false);
   }
 });
 
@@ -519,6 +568,7 @@ function buildExplainBars(payload) {
 function showError(message) {
   errorText.textContent = message;
   errorDiv.classList.remove('hidden');
+  errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 /* ═══════════════════════════════════════════════════════════════

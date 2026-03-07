@@ -371,22 +371,6 @@
                   </label>
                 </div>
               </div>
-              <div class="form-group form-group--toggle" id="formGroupHvyAlcohol">
-                <label>Heavy drinking <span class="form-group__unit">(based on CDC guidelines)</span></label>
-                <div class="toggle-group">
-                  <label class="toggle-option">
-                    <input type="radio" name="HvyAlcoholConsump" value="true" required />
-                    <span class="toggle-option__label">Yes</span>
-                  </label>
-                  <label class="toggle-option">
-                    <input type="radio" name="HvyAlcoholConsump" value="false" />
-                    <span class="toggle-option__label">No</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-row form-row--full form-row--toggles">
               <div class="form-group form-group--toggle" id="formGroupPhysActivity">
                 <label>During the past 30 days, other than your regular job, did you participate in any physical
                   activity or exercise such as running, walking, golf, gardening, or swimming?</label>
@@ -397,6 +381,23 @@
                   </label>
                   <label class="toggle-option">
                     <input type="radio" name="PhysActivity" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row form-row--full form-row--toggles">
+              <div class="form-group form-group--toggle" id="formGroupHvyAlcohol">
+                <label>According to the CDC, heavy drinking is defined as consuming 8 or more drinks per week for
+                  women and 15 or more drinks per week for men. Does this apply to you?</label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="HvyAlcoholConsump" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="HvyAlcoholConsump" value="false" />
                     <span class="toggle-option__label">No</span>
                   </label>
                 </div>

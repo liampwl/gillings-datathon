@@ -28,6 +28,7 @@
   --accent-cyan: #2a5c82;
   --accent-indigo: #334155;
   --accent-green: #059669;
+  --accent-emerald: #10b981;
   --accent-amber: #d97706;
   --accent-red: #dc2626;
 
@@ -66,6 +67,7 @@
   /* Muted slate blue */
   --accent-indigo: #64748b;
   --accent-green: #34d399;
+  --accent-emerald: #34d399;
   --accent-amber: #fbbf24;
   --accent-red: #f87171;
 
@@ -92,6 +94,17 @@
 .theme-toggle:hover {
   background: rgba(148, 163, 184, 0.1);
   color: var(--text-primary);
+}
+
+.theme-toggle:focus-visible,
+.btn-voice:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.clinic-finder__btn:focus-visible,
+.resource-pill:focus-visible,
+.clinic-card__meta a:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
 }
 
 html {
@@ -659,6 +672,11 @@ body {
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
 }
 
+.form-group input[aria-invalid="true"] {
+  border-color: var(--accent-red);
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.16);
+}
+
 /* Toggle buttons */
 .toggle-group {
   display: flex;
@@ -708,6 +726,11 @@ body {
   border-color: rgba(148, 163, 184, 0.25);
 }
 
+.toggle-option input[type="radio"]:focus-visible+.toggle-option__label {
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
+  border-color: var(--accent-cyan);
+}
+
 /* Consent section styling */
 .form-consent {
   display: flex;
@@ -750,6 +773,11 @@ body {
 
 .checkbox-container:hover input~.checkmark {
   border-color: rgba(148, 163, 184, 0.4);
+}
+
+.checkbox-container input:focus-visible~.checkmark {
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+  border-color: var(--accent-cyan);
 }
 
 .checkbox-container input:checked~.checkmark {
@@ -837,12 +865,31 @@ body {
   box-shadow: none;
 }
 
+.btn-primary[data-loading="true"] {
+  opacity: 0.92;
+  cursor: progress;
+}
+
+.btn-primary[data-loading="true"] svg {
+  animation: spin 0.9s linear infinite;
+}
+
 .btn-primary svg {
   transition: transform 0.3s var(--ease-out);
 }
 
 .btn-primary:hover svg {
   transform: rotate(90deg);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* --- Form Progress Bar --- */
@@ -1677,6 +1724,20 @@ body {
 .card--error__inner svg {
   flex-shrink: 0;
   margin-top: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* --- Footer --- */
