@@ -45,7 +45,7 @@ function toNumeric(value) {
  * @returns {string} 'Low', 'Moderate', or 'High'.
  */
 function getRiskCategory(probability) {
-  if (probability < 0.20) return 'Low';
+  if (probability < 0.42) return 'Low';
   if (probability < 0.78) return 'Moderate';
   return 'High';
 }
