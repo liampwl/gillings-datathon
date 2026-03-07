@@ -863,6 +863,16 @@ function buildInsights(payload, result, sdohData) {
     pill.innerHTML = `<span class="resource-pill__icon">${r.icon}</span> ${r.label}`;
     insightsResourcesList.appendChild(pill);
   }
+
+  // ─── Doctor Questions: only show for Moderate / High ───
+  const doctorQuestionsEl = document.getElementById('doctorQuestions');
+  if (doctorQuestionsEl) {
+    if (riskLevel === 'Moderate' || riskLevel === 'High') {
+      doctorQuestionsEl.style.display = '';
+    } else {
+      doctorQuestionsEl.style.display = 'none';
+    }
+  }
 }
 
 /* ─── Nearby Health Center Finder ─── */
@@ -928,3 +938,66 @@ async function searchClinics() {
     clinicSearchBtn.textContent = 'Search';
   }
 }
+
+/* ─── Form Progress Bar ─── */
+
+(function initFormProgress() {
+  const progressFill = document.getElementById('formProgressFill');
+  const progressLabel = document.getElementById('formProgressLabel');
+  if (!progressFill || !progressLabel) return;
+
+  // Define all required fields to track
+  const numberFields = ['age', 'weightLbs', 'heightFt', 'heightIn', 'sleepHours'];
+  const radioGroups = [
+    'HighBP', 'HighChol', 'CholCheck', 'Smoker',
+    'Stroke', 'HeartDiseaseorAttack', 'PhysActivity',
+    'Fruits', 'Veggies', 'HvyAlcoholConsump', 'AnyHealthcare'
+  ];
+  const checkboxId = 'dataConsent';
+  const totalFields = numberFields.length + radioGroups.length + 1; // +1 for consent
+
+  function countCompleted() {
+    let count = 0;
+
+    // Number/text inputs — completed if they have a non-empty value
+    for (const id of numberFields) {
+      const el = document.getElementById(id);
+      if (el && el.value.trim() !== '') count++;
+    }
+
+    // Radio groups — completed if any option is selected
+    for (const name of radioGroups) {
+      if (document.querySelector(`input[name="${name}"]:checked`)) count++;
+    }
+
+    // Consent checkbox
+    const consent = document.getElementById(checkboxId);
+    if (consent && consent.checked) count++;
+
+    return count;
+  }
+
+  function updateProgress() {
+    const completed = countCompleted();
+    const pct = Math.round((completed / totalFields) * 100);
+
+    progressFill.style.width = `${pct}%`;
+    progressLabel.textContent = `${completed} of ${totalFields} fields`;
+
+    if (completed === totalFields) {
+      progressFill.setAttribute('data-complete', 'true');
+    } else {
+      progressFill.removeAttribute('data-complete');
+    }
+  }
+
+  // Attach listeners to all form elements
+  const formEl = document.getElementById('riskForm');
+  if (formEl) {
+    formEl.addEventListener('input', updateProgress);
+    formEl.addEventListener('change', updateProgress);
+  }
+
+  // Initial state
+  updateProgress();
+})();

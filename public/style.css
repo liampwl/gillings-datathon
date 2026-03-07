@@ -1,5 +1,5 @@
 /* =========================================================
-   DiabetesIQ — Premium Dark Portal Theme
+   BRFSS 2.0 — Premium Dark Portal Theme
    ========================================================= */
 
 /* --- Reset & Base --- */
@@ -186,6 +186,12 @@ body {
 
 .top-bar__logo svg {
   display: block;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.3));
+  transition: filter 0.4s ease;
+}
+
+.top-bar__logo:hover svg {
+  filter: drop-shadow(0 0 12px rgba(129, 140, 248, 0.5));
 }
 
 .top-bar__title {
@@ -279,29 +285,70 @@ body {
   font-size: 1rem;
   line-height: 1.7;
   color: var(--text-secondary);
-  max-width: 460px;
+  max-width: 480px;
 }
 
-.hero-panel__stats {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
-  padding: 16px;
+.hero-panel__list {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin: 6px 0 12px;
+  max-width: 460px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Staggered entrance animation for hero content */
+.hero-panel__inner>* {
+  animation: slideUp 0.6s var(--ease-out) both;
+}
+
+.hero-panel__inner>*:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.hero-panel__inner>*:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.hero-panel__inner>*:nth-child(3) {
+  animation-delay: 0.25s;
+}
+
+.hero-panel__inner>*:nth-child(4) {
+  animation-delay: 0.35s;
+}
+
+.hero-panel__inner>*:nth-child(5) {
+  animation-delay: 0.45s;
+}
+
+.hero-panel__inner>*:nth-child(6) {
+  animation-delay: 0.55s;
+}
+
+.hero-panel__section {
+  margin-top: 1.5rem;
+  padding: 1rem;
   background: var(--input-bg);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-.stat-row {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-.stat-row strong {
-  color: var(--text-primary);
+.hero-panel__section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family-heading);
+  font-size: 1.05rem;
   font-weight: 600;
-  margin-right: 4px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.hero-panel__section-title svg {
+  color: var(--accent-indigo);
 }
 
 .hero-panel__disclaimer {
@@ -382,11 +429,23 @@ body {
   background: var(--bg-surface);
 }
 
+.form-section__intro {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
 /* --- Form --- */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+}
+
+.form-row--full {
+  grid-template-columns: 1fr;
 }
 
 .form-row--height {
@@ -434,6 +493,8 @@ body {
 }
 
 .form-group {
+  display: flex;
+  flex-direction: column;
   margin-bottom: 16px;
 }
 
@@ -486,7 +547,12 @@ body {
 .toggle-group {
   display: flex;
   gap: 8px;
-  margin-top: 2px;
+  margin-top: 4px;
+}
+
+.form-row--full .toggle-group {
+  width: 100%;
+  max-width: 320px;
 }
 
 .toggle-option {
@@ -596,6 +662,14 @@ body {
 }
 
 /* Submit */
+.form-submit-hint {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
 .btn-primary {
   display: flex;
   align-items: center;
@@ -653,6 +727,56 @@ body {
 
 .btn-primary:hover svg {
   transform: rotate(90deg);
+}
+
+/* --- Form Progress Bar --- */
+.form-progress {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 4px 6px;
+  margin: 8px -1.75rem -1.75rem;
+  padding-left: 1.75rem;
+  padding-right: 1.75rem;
+  background: var(--bg-surface-solid);
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.form-progress__track {
+  flex: 1;
+  height: 6px;
+  background: rgba(148, 163, 184, 0.12);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.form-progress__fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, #34d399, #6ee7b7, #a7f3d0);
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.3);
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.form-progress__fill[data-complete="true"] {
+  background: linear-gradient(90deg, #22c55e, #4ade80, #86efac);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+}
+
+.form-progress__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 80px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
 /* --- Results Card --- */
@@ -1561,6 +1685,11 @@ body {
 }
 
 /* --- Print Styles --- */
+@page {
+  size: letter;
+  margin: 0.35in 0.4in;
+}
+
 @media print {
 
   .hide-on-print,
@@ -1571,30 +1700,58 @@ body {
   .clinic-finder,
   .insights-cards,
   .insights-resources,
+  .action-bar,
   #themeToggle {
     display: none !important;
   }
 
+  /* Hide doctor questions when JS has set display:none */
+  .doctor-questions[style*="display: none"] {
+    display: none !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html,
   body {
     background: white !important;
     color: black !important;
-    font-size: 12px !important;
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
   }
 
   .main-layout {
     display: block !important;
     padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+
+  .tool-panel {
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
   }
 
   .card {
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    margin-bottom: 0.5rem !important;
+    margin: 0 0 4px 0 !important;
     page-break-inside: avoid;
+    background: transparent !important;
   }
 
-  /* Force side-by-side Layout for Gauge and Bars in Print Mode to save space */
+  /* Force side-by-side layout for Gauge and Bars to save space */
   #result.card {
     display: flex;
     flex-wrap: wrap;
@@ -1604,26 +1761,45 @@ body {
 
   .card__header {
     width: 100%;
-    margin-bottom: 0px !important;
-    padding-bottom: 0px !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
   }
 
   .card__title {
-    font-size: 1.1rem !important;
-    margin-bottom: 4px !important;
+    font-size: 1rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .risk-badge {
+    margin: 0 !important;
+    padding: 2px 8px !important;
+    width: 100%;
   }
 
   .gauge-container {
-    width: 45%;
+    width: 42%;
     page-break-inside: avoid;
-    transform: scale(0.75);
+    transform: scale(0.65);
     transform-origin: top left;
     margin: 0 !important;
     padding: 0 !important;
+    height: 80px !important;
+  }
+
+  .gauge-svg {
+    width: 100% !important;
+  }
+
+  .gauge-value {
+    font-size: 1.3rem !important;
+  }
+
+  .gauge-label {
+    font-size: 0.7rem !important;
   }
 
   .explain-panel {
-    width: 50%;
+    width: 55%;
     margin-top: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1631,53 +1807,72 @@ body {
   }
 
   .explain-bar {
-    margin-bottom: 2px !important;
+    margin-bottom: 1px !important;
+    gap: 4px !important;
+  }
+
+  .explain-bar__label {
+    font-size: 0.75rem !important;
+  }
+
+  .explain-bar__track {
+    height: 8px !important;
+  }
+
+  .explain-bar__value {
+    font-size: 0.7rem !important;
   }
 
   .explain-panel__title {
-    font-size: 1rem !important;
-    margin-bottom: 4px !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 3px !important;
   }
 
   .explain-panel__note {
-    font-size: 0.75rem !important;
-    line-height: 1.2 !important;
+    font-size: 0.65rem !important;
+    line-height: 1.15 !important;
+    margin-top: 3px !important;
   }
 
   .doctor-questions {
-    margin: 8px 0 8px !important;
-    padding: 12px !important;
-    border: 1px solid #ddd !important;
+    margin: 4px 0 !important;
+    padding: 8px 10px !important;
+    border: 1px solid #ccc !important;
     background: transparent !important;
     page-break-inside: avoid;
   }
 
   .doctor-questions__title {
-    font-size: 1rem !important;
-    margin-bottom: 8px !important;
-  }
-
-  .doctor-questions__list {
-    margin-bottom: 0 !important;
     font-size: 0.85rem !important;
-    line-height: 1.3 !important;
-  }
-
-  .doctor-questions__list li {
     margin-bottom: 4px !important;
   }
 
+  .doctor-questions__list {
+    margin: 0 !important;
+    padding-left: 18px !important;
+    font-size: 0.75rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .doctor-questions__list li {
+    margin-bottom: 2px !important;
+  }
+
   .insights-summary {
-    font-size: 0.85rem !important;
-    line-height: 1.3 !important;
-    margin-bottom: 8px !important;
-    padding: 8px !important;
+    font-size: 0.75rem !important;
+    line-height: 1.25 !important;
+    margin-bottom: 4px !important;
+    padding: 6px 8px !important;
   }
 
   .insights-disclaimer {
-    font-size: 0.65rem !important;
-    line-height: 1.2 !important;
-    padding: 8px !important;
-    margin-top: 4px !important;
+    font-size: 0.6rem !important;
+    line-height: 1.15 !important;
+    padding: 6px 8px !important;
+    margin-top: 2px !important;
+  }
+
+  .footer {
+    display: none !important;
   }
 }

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DiabetesIQ — Type 2 Diabetes Risk Screening</title>
+  <title>BRFSS 2.0 — Type 2 Diabetes Risk Screening</title>
   <meta name="description"
     content="An evidence-based Type 2 diabetes risk screening tool using logistic regression on BRFSS-derived predictors. Estimate your risk in seconds." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,20 +24,63 @@
     <div class="top-bar__inner">
       <div class="top-bar__brand">
         <div class="top-bar__logo" aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <circle cx="14" cy="14" r="13" stroke="url(#logoGrad)" stroke-width="2" />
-            <path d="M9 14.5C9 11.5 11.5 9 14.5 9C17 9 19 11 19 13.5C19 16.5 16.5 19.5 14 19.5C11.5 19.5 9 17.5 9 14.5Z"
-              fill="url(#logoGrad)" opacity="0.8" />
-            <circle cx="14" cy="14" r="3" fill="#0F172A" />
+          <svg class="logo-morph" width="32" height="32" viewBox="0 0 100 100" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28">
-                <stop stop-color="#38bdf8" />
-                <stop offset="1" stop-color="#818cf8" />
+              <linearGradient id="logoGradA" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8">
+                  <animate attributeName="stop-color" values="#38bdf8;#818cf8;#c084fc;#f472b6;#38bdf8" dur="8s"
+                    repeatCount="indefinite" />
+                </stop>
+                <stop offset="100%" stop-color="#818cf8">
+                  <animate attributeName="stop-color" values="#818cf8;#34d399;#38bdf8;#818cf8;#818cf8" dur="8s"
+                    repeatCount="indefinite" />
+                </stop>
               </linearGradient>
+              <linearGradient id="logoGradB" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#c084fc">
+                  <animate attributeName="stop-color" values="#c084fc;#38bdf8;#34d399;#fbbf24;#c084fc" dur="10s"
+                    repeatCount="indefinite" />
+                </stop>
+                <stop offset="100%" stop-color="#f472b6">
+                  <animate attributeName="stop-color" values="#f472b6;#818cf8;#38bdf8;#c084fc;#f472b6" dur="10s"
+                    repeatCount="indefinite" />
+                </stop>
+              </linearGradient>
+              <filter id="logoGlow">
+                <feGaussianBlur stdDeviation="2" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
             </defs>
+            <!-- Outer morphing ring -->
+            <path filter="url(#logoGlow)" stroke="url(#logoGradA)" stroke-width="3" fill="none" opacity="0.7">
+              <animate attributeName="d" values="M50 8 C72 8, 92 28, 92 50 C92 72, 72 92, 50 92 C28 92, 8 72, 8 50 C8 28, 28 8, 50 8Z;
+                        M55 10 C78 14, 90 32, 88 55 C86 78, 68 90, 45 88 C22 86, 10 68, 12 45 C14 22, 32 6, 55 10Z;
+                        M45 10 C68 6, 86 22, 88 45 C90 68, 78 86, 55 90 C32 94, 14 78, 12 55 C10 32, 22 14, 45 10Z;
+                        M50 8 C72 8, 92 28, 92 50 C92 72, 72 92, 50 92 C28 92, 8 72, 8 50 C8 28, 28 8, 50 8Z" dur="12s"
+                repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1" />
+            </path>
+            <!-- Inner morphing blob -->
+            <path fill="url(#logoGradB)" opacity="0.35">
+              <animate attributeName="d" values="M50 22 C64 22, 78 36, 78 50 C78 64, 64 78, 50 78 C36 78, 22 64, 22 50 C22 36, 36 22, 50 22Z;
+                        M54 24 C70 28, 76 40, 74 54 C72 68, 60 76, 46 74 C32 72, 24 60, 26 46 C28 32, 40 20, 54 24Z;
+                        M46 24 C60 20, 72 32, 74 46 C76 60, 68 72, 54 76 C40 80, 28 68, 26 54 C24 40, 32 28, 46 24Z;
+                        M50 22 C64 22, 78 36, 78 50 C78 64, 64 78, 50 78 C36 78, 22 64, 22 50 C22 36, 36 22, 50 22Z"
+                dur="10s" repeatCount="indefinite" calcMode="spline"
+                keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1" />
+            </path>
+            <!-- Center nucleus -->
+            <circle cx="50" cy="50" r="8" fill="url(#logoGradA)" opacity="0.9">
+              <animate attributeName="r" values="8;10;7;9;8" dur="6s" repeatCount="indefinite" calcMode="spline"
+                keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1" />
+            </circle>
+            <circle cx="50" cy="50" r="3.5" fill="var(--bg-base, #0F172A)">
+              <animate attributeName="r" values="3.5;4.5;3;4;3.5" dur="6s" repeatCount="indefinite" calcMode="spline"
+                keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1" />
+            </circle>
           </svg>
         </div>
-        <span class="top-bar__title">Diabetes<span class="top-bar__title--accent">IQ</span></span>
+        <span class="top-bar__title">BRFSS<span class="top-bar__title--accent">&nbsp;2.0</span></span>
       </div>
       <nav class="top-bar__nav">
         <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
@@ -58,8 +101,6 @@
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         </button>
-        <span class="top-bar__badge">Prototype v1.0</span>
-        <span class="top-bar__badge top-bar__badge--model">Logistic Regression</span>
       </nav>
     </div>
   </header>
@@ -73,24 +114,56 @@
         <h1 class="hero-panel__heading">
           Evidence-Based<br /> Type&nbsp;2 Diabetes<br /> Risk Estimator
         </h1>
-        <p class="hero-panel__desc">
-          This tool uses a logistic regression model trained on BRFSS-derived health indicators to estimate individual
-          risk for <strong>Type 2 diabetes</strong>. Enter patient data to receive an instant probability score,
-          an interpretable risk breakdown, and evidence-based next steps.
-        </p>
-        <div class="hero-panel__stats">
-          <div class="stat-row"><strong>Predictors:</strong> 5</div>
-          <div class="stat-row"><strong>Model:</strong> Logistic Regression</div>
-          <div class="stat-row"><strong>Dataset:</strong> BRFSS</div>
+        <div class="hero-panel__section">
+          <h2 class="hero-panel__section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            About This Tool
+          </h2>
+          <p class="hero-panel__desc">
+            This demonstration tool was created using public health survey data from the
+            <strong>Behavioral Risk Factor Surveillance System (BRFSS)</strong>.
+            BRFSS collects information from hundreds of thousands of Americans each year about:
+          </p>
+          <ul class="hero-panel__list">
+            <li>Health behaviors</li>
+            <li>Chronic conditions</li>
+            <li>Preventive health care</li>
+          </ul>
+          <p class="hero-panel__desc">
+            Our model uses selected BRFSS indicators to show how population health data can be translated into
+            meaningful feedback for individuals.
+          </p>
+        </div>
+
+        <div class="hero-panel__section">
+          <h2 class="hero-panel__section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            Privacy by Design
+          </h2>
+          <p class="hero-panel__desc">
+            We believe in strict data minimization. Your health inputs are transmitted to a
+            stateless server strictly to calculate your score—no databases are connected, and
+            <strong>your data is never logged, stored, or sold.</strong> The only information sent to a
+            third party is your ZIP Code (optional), which is pinged to the official Health Resources
+            &amp; Services Administration (HRSA) API to retrieve nearby public health clinics.
+          </p>
         </div>
         <div class="hero-panel__disclaimer">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
             <path
               d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm-.75 4a.75.75 0 0 1 1.5 0v3.5a.75.75 0 0 1-1.5 0V5ZM8 11.5A.75.75 0 1 1 8 10a.75.75 0 0 1 0 1.5Z" />
           </svg>
-          <span>For research and demonstration purposes only. This tool screens for <strong>Type&nbsp;2 diabetes risk
-              only</strong> and is not intended as medical advice. An A1C or fasting glucose test from a healthcare
-            provider is needed for clinical diagnosis.</span>
+          <span><strong>For Research &amp; Demonstration Only.</strong> This tool is part of the
+            Gillings School of Global Public Health Datathon 2026 and is intended for educational and
+            research purposes.</span>
         </div>
       </div>
     </section>
@@ -106,30 +179,30 @@
               <path d="M6 7h8M6 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
             </svg>
           </div>
-          <h2 class="card__title">Patient Data Input</h2>
+          <h2 class="card__title">Tell Us About Your Health</h2>
         </div>
 
         <form id="riskForm" novalidate autocomplete="off">
           <fieldset class="form-section">
-            <legend class="form-section__title">Demographics & Measurements</legend>
+            <legend class="form-section__title">Basic Information</legend>
             <div class="form-row">
               <div class="form-group" id="formGroupAge">
-                <label for="age">Age <span class="form-group__unit">(years)</span></label>
+                <label for="age">Age <span class="form-group__unit">(in years)</span></label>
                 <input type="number" id="age" name="age" min="1" max="120" required />
               </div>
               <div class="form-group" id="formGroupWeight">
-                <label for="weightLbs">Weight <span class="form-group__unit">(lbs)</span></label>
+                <label for="weightLbs">Weight <span class="form-group__unit">(in pounds)</span></label>
                 <input type="number" id="weightLbs" name="weightLbs" min="50" max="700" required />
               </div>
             </div>
 
             <div class="form-row form-row--height">
               <div class="form-group" id="formGroupHeightFt">
-                <label for="heightFt">Height <span class="form-group__unit">(ft)</span></label>
+                <label for="heightFt">Height <span class="form-group__unit">(feet)</span></label>
                 <input type="number" id="heightFt" name="heightFt" min="3" max="8" required />
               </div>
               <div class="form-group" id="formGroupHeightIn">
-                <label for="heightIn"><span class="form-group__unit">(in)</span></label>
+                <label for="heightIn"><span class="form-group__unit">(inches)</span></label>
                 <input type="number" id="heightIn" name="heightIn" min="0" max="11" required />
               </div>
               <div class="bmi-preview" id="bmiPreview" aria-live="polite">
@@ -140,7 +213,7 @@
 
             <div class="form-row">
               <div class="form-group" id="formGroupZip">
-                <label for="zipCode">ZIP Code <span class="form-group__unit">(Optional)</span></label>
+                <label for="zipCode">ZIP Code <span class="form-group__unit">(optional)</span></label>
                 <input type="text" id="zipCode" name="zipCode" maxlength="5" pattern="\d{5}" inputmode="numeric" />
               </div>
             </div>
@@ -148,9 +221,11 @@
 
           <fieldset class="form-section">
             <legend class="form-section__title">Medical History</legend>
+            <p class="form-section__intro">Have you ever been told by a doctor, nurse, or other health professional that
+              you have:</p>
             <div class="form-row form-row--toggles">
               <div class="form-group form-group--toggle" id="formGroupHighBP">
-                <label>High Blood Pressure <br><small>(HighBP)</small></label>
+                <label>High blood pressure?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="HighBP" value="true" required />
@@ -163,7 +238,7 @@
                 </div>
               </div>
               <div class="form-group form-group--toggle" id="formGroupHighChol">
-                <label>High Cholesterol <br><small>(HighChol)</small></label>
+                <label>High cholesterol?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="HighChol" value="true" required />
@@ -178,7 +253,7 @@
             </div>
             <div class="form-row form-row--toggles">
               <div class="form-group form-group--toggle" id="formGroupCholCheck">
-                <label>Cholesterol Check <br><small>(Last 5 yrs)</small></label>
+                <label>Have you had your cholesterol checked within the past 5 years?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="CholCheck" value="true" required />
@@ -191,7 +266,7 @@
                 </div>
               </div>
               <div class="form-group form-group--toggle" id="formGroupSmoker">
-                <label>Smoker <br><small>(≥100 cigs in life)</small></label>
+                <label>Have you ever smoked at least 100 cigarettes in your lifetime?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="Smoker" value="true" required />
@@ -207,7 +282,7 @@
 
             <div class="form-row form-row--toggles">
               <div class="form-group form-group--toggle" id="formGroupStroke">
-                <label>Ever had a stroke?</label>
+                <label>Have you ever been told you had a stroke?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="Stroke" value="true" required />
@@ -220,7 +295,7 @@
                 </div>
               </div>
               <div class="form-group form-group--toggle" id="formGroupHeartDisease">
-                <label>Heart Disease / Attack</label>
+                <label>Have you ever been told you had a heart attack or coronary heart disease?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="HeartDiseaseorAttack" value="true" required />
@@ -236,31 +311,14 @@
           </fieldset>
 
           <fieldset class="form-section">
-            <legend class="form-section__title">Lifestyle Assessment</legend>
+            <legend class="form-section__title">Lifestyle &amp; Daily Habits</legend>
             <div class="form-row">
               <div class="form-group" id="formGroupSleep">
-                <label for="sleepHours">Average Sleep <span class="form-group__unit">(hrs)</span></label>
+                <label for="sleepHours">On average, how many hours of sleep do you get in a 24-hour period?</label>
                 <input type="number" id="sleepHours" name="sleepHours" min="1" max="24" step="0.5" required />
               </div>
-              <!-- Empty slot for grid balance if needed -->
-              <div class="form-group form-group--toggle" style="opacity: 0; pointer-events: none;"></div>
-            </div>
-            <div class="form-row form-row--toggles">
-              <div class="form-group form-group--toggle" id="formGroupPhysActivity">
-                <label>Physically Active <br><small>(Past 30 days)</small></label>
-                <div class="toggle-group">
-                  <label class="toggle-option">
-                    <input type="radio" name="PhysActivity" value="true" required />
-                    <span class="toggle-option__label">Yes</span>
-                  </label>
-                  <label class="toggle-option">
-                    <input type="radio" name="PhysActivity" value="false" />
-                    <span class="toggle-option__label">No</span>
-                  </label>
-                </div>
-              </div>
               <div class="form-group form-group--toggle" id="formGroupFruits">
-                <label>Consume Fruits <br><small>(≥1 / day)</small></label>
+                <label>Do you usually eat fruit at least once per day?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="Fruits" value="true" required />
@@ -273,9 +331,10 @@
                 </div>
               </div>
             </div>
+
             <div class="form-row form-row--toggles">
               <div class="form-group form-group--toggle" id="formGroupVeggies">
-                <label>Consume Veggies <br><small>(≥1 / day)</small></label>
+                <label>Do you usually eat vegetables at least once per day?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="Veggies" value="true" required />
@@ -288,7 +347,7 @@
                 </div>
               </div>
               <div class="form-group form-group--toggle" id="formGroupHvyAlcohol">
-                <label>Heavy Drinker</label>
+                <label>Heavy drinking <span class="form-group__unit">(based on CDC guidelines)</span></label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="HvyAlcoholConsump" value="true" required />
@@ -301,13 +360,31 @@
                 </div>
               </div>
             </div>
+
+            <div class="form-row form-row--full form-row--toggles">
+              <div class="form-group form-group--toggle" id="formGroupPhysActivity">
+                <label>During the past 30 days, other than your regular job, did you participate in any physical
+                  activity or exercise such as running, walking, golf, gardening, or swimming?</label>
+                <div class="toggle-group">
+                  <label class="toggle-option">
+                    <input type="radio" name="PhysActivity" value="true" required />
+                    <span class="toggle-option__label">Yes</span>
+                  </label>
+                  <label class="toggle-option">
+                    <input type="radio" name="PhysActivity" value="false" />
+                    <span class="toggle-option__label">No</span>
+                  </label>
+                </div>
+              </div>
+            </div>
           </fieldset>
 
           <fieldset class="form-section">
             <legend class="form-section__title">Healthcare Access</legend>
-            <div class="form-row form-row--toggles">
+            <div class="form-row form-row--full form-row--toggles">
               <div class="form-group form-group--toggle" id="formGroupAnyHealthcare">
-                <label>Healthcare Coverage</label>
+                <label>Do you currently have any kind of healthcare coverage, including health insurance, prepaid plans
+                  such as HMOs, or government plans such as Medicare?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="AnyHealthcare" value="true" required />
@@ -319,8 +396,6 @@
                   </label>
                 </div>
               </div>
-              <!-- Blank div to keep layout balanced -->
-              <div class="form-group form-group--toggle" style="opacity: 0; pointer-events: none;"></div>
             </div>
           </fieldset>
 
@@ -343,9 +418,18 @@
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
               <path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
             </svg>
-            <span>Run Analysis</span>
+            <span>Run Risk Estimate</span>
           </button>
+          <p class="form-submit-hint">Generate your Type 2 Diabetes Risk Score</p>
         </form>
+
+        <!-- Form progress bar -->
+        <div class="form-progress" id="formProgress" aria-live="polite">
+          <div class="form-progress__track">
+            <div class="form-progress__fill" id="formProgressFill"></div>
+          </div>
+          <span class="form-progress__label" id="formProgressLabel">0 of 17 fields</span>
+        </div>
       </div>
 
       <!-- Results card (hidden initially) -->
