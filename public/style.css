@@ -671,6 +671,57 @@ body {
   appearance: textfield;
 }
 
+.form-group select {
+  width: 100%;
+  padding: 10px 42px 10px 14px;
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* Custom chevron keeps selects visually consistent across browsers. */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) calc(50% - 2px),
+    calc(100% - 14px) calc(50% - 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.form-group select:hover {
+  border-color: var(--border-hover);
+}
+
+.form-group select:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+}
+
+.form-group select[aria-invalid="true"] {
+  border-color: var(--accent-red);
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.16);
+}
+
+.form-group select option {
+  color: var(--text-primary);
+  background: var(--bg-surface-solid);
+}
+
+/* Keep the unselected "Select one" state visually muted. */
+.form-group select:required:invalid {
+  color: var(--text-muted);
+}
+
 .form-group input[type="number"]::-webkit-inner-spin-button,
 .form-group input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -1110,8 +1161,8 @@ body {
 
 .explain-bar {
   display: grid;
-  grid-template-columns: 100px 1fr auto;
-  align-items: center;
+  grid-template-columns: minmax(140px, 180px) minmax(120px, 1fr);
+  align-items: start;
   gap: 12px;
   animation: fadeInBar 0.4s var(--ease-out) both;
 }
@@ -1152,7 +1203,9 @@ body {
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--text-secondary);
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
 }
 
 .explain-bar__track {
@@ -1161,6 +1214,7 @@ body {
   background: rgba(148, 163, 184, 0.08);
   overflow: hidden;
   position: relative;
+  margin-top: 4px;
 }
 
 .explain-bar__fill {
@@ -1184,6 +1238,7 @@ body {
   font-variant-numeric: tabular-nums;
   min-width: 48px;
   text-align: right;
+  margin-top: 1px;
 }
 
 .explain-bar__value--positive {
@@ -1878,6 +1933,20 @@ body {
 
   .toggle-group {
     gap: 6px;
+  }
+
+  .explain-bar {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .explain-bar__track {
+    margin-top: 0;
+  }
+
+  .explain-bar__value {
+    text-align: left;
+    margin-top: 0;
   }
 }
 

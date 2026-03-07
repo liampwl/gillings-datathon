@@ -673,9 +673,6 @@ function buildExplainBars(payload) {
       <div class="explain-bar__track">
         <div class="explain-bar__fill explain-bar__fill--${isPositive ? 'positive' : 'negative'}" style="width: 0%"></div>
       </div>
-      <span class="explain-bar__value explain-bar__value--${isPositive ? 'positive' : 'negative'}">
-        ${isPositive ? '+' : ''}${value.toFixed(3)}
-      </span>
     `;
     explainBars.appendChild(bar);
 
