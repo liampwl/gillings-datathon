@@ -186,7 +186,7 @@ body {
 .top-bar__inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding-inline: max(2rem, env(safe-area-inset-left)) max(2rem, env(safe-area-inset-right));
   height: 56px;
   display: flex;
   align-items: center;
@@ -1762,7 +1762,9 @@ body {
   .main-layout {
     display: flex;
     flex-direction: column;
-    padding: 2rem 1.25rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    padding-inline: max(1.25rem, env(safe-area-inset-left)) max(1.25rem, env(safe-area-inset-right));
     gap: 1.6rem;
   }
 
@@ -1806,7 +1808,12 @@ body {
   }
 
   .top-bar__inner {
-    padding: 0 1.25rem;
+    padding-inline: max(1.25rem, env(safe-area-inset-left)) max(1.25rem, env(safe-area-inset-right));
+  }
+
+  .tool-panel,
+  .card {
+    width: 100%;
   }
 
 }
@@ -1824,6 +1831,17 @@ body {
 
   .card {
     padding: 1.25rem;
+  }
+
+  .form-progress {
+    margin: 8px -1.25rem -1.25rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .form-progress__label {
+    min-width: 72px;
+    font-size: 0.66rem;
   }
 
   .toggle-group {
