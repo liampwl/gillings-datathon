@@ -177,6 +177,9 @@ form.addEventListener('submit', async (event) => {
   thankYouCard.classList.add('hidden');
   RISK_CLASSES.forEach((cls) => riskBadge.classList.remove(cls));
 
+  // Clear previous highlights
+  document.querySelectorAll('.error-highlight').forEach((el) => el.classList.remove('error-highlight'));
+
   // Gather inputs
   const age = parseFloat(document.getElementById('age').value);
   const weightLbs = parseFloat(document.getElementById('weightLbs').value);
@@ -210,6 +213,14 @@ form.addEventListener('submit', async (event) => {
     const el = document.querySelector(`input[name="${name}"]:checked`);
     if (!el) {
       showError('Please answer all questions before submitting.');
+      const missingInput = document.querySelector(`input[name="${name}"]`);
+      if (missingInput) {
+        const group = missingInput.closest('.form-group');
+        if (group) {
+          group.classList.add('error-highlight');
+          group.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
       return;
     }
     payload[name] = el.value === 'true' ? 1 : 0;
@@ -264,8 +275,8 @@ form.addEventListener('submit', async (event) => {
     // Animate gauge
     animateGauge(prob);
 
-    // Risk category
-    riskCategoryEl.textContent = data.riskCategory;
+    // Risk category with Deuteranomaly color-blindness accommodation
+    riskCategoryEl.innerHTML = data.riskCategory === 'High' ? `<span aria-hidden="true" style="margin-right: 4px;">⚠️</span>High` : data.riskCategory;
     const riskClass = `risk-badge--${data.riskCategory.toLowerCase()}`;
     riskBadge.classList.add(riskClass);
 
@@ -347,7 +358,8 @@ function buildWhatIfPanel(payload) {
     if (prob < 0.3) { category = 'Low'; color = 'var(--accent-green)'; }
     else if (prob < 0.6) { category = 'Moderate'; color = '#fbbf24'; }
 
-    whatIfRiskBadge.textContent = `${category} Risk`;
+    // Color-blindness icon
+    whatIfRiskBadge.innerHTML = category === 'High' ? `<span aria-hidden="true" style="margin-right: 4px;">⚠️</span>High Risk` : `${category} Risk`;
     whatIfRiskBadge.className = 'whatif-result__badge';
     whatIfRiskBadge.style.color = color;
     whatIfRiskBadge.style.backgroundColor = `color-mix(in srgb, ${color} 15%, transparent)`;
@@ -1000,4 +1012,193 @@ async function searchClinics() {
 
   // Initial state
   updateProgress();
+})();
+
+/* --- Voice Guided Assistant --- */
+(function initVoiceAssistant() {
+  const voiceBtn = document.getElementById('voiceBtn');
+  const voiceBtnText = document.getElementById('voiceBtnText');
+  if (!voiceBtn) return;
+
+  // Check support
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    voiceBtn.style.display = 'none';
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
+
+  let voiceActive = false;
+  let currentQuestionIndex = 0;
+
+  const questionsList = [
+    { id: 'age', text: "What is your age in years?", type: 'number' },
+    { id: 'weightLbs', text: "What is your weight in pounds?", type: 'number' },
+    { id: 'heightFt', text: "How tall are you in feet?", type: 'number' },
+    { id: 'heightIn', text: "And inches?", type: 'number' },
+    { id: 'zipCode', text: "What is your ZIP code? You can say skip if you want.", type: 'number', optional: true },
+    { name: 'HighBP', text: "Have you ever been told by a doctor that you have high blood pressure?", type: 'radio' },
+    { name: 'HighChol', text: "Have you ever been told that you have high cholesterol?", type: 'radio' },
+    { name: 'CholCheck', text: "Have you had your cholesterol checked within the past 5 years?", type: 'radio' },
+    { name: 'Smoker', text: "Have you ever smoked at least 100 cigarettes in your lifetime?", type: 'radio' },
+    { name: 'Stroke', text: "Have you ever been told you had a stroke?", type: 'radio' },
+    { name: 'HeartDiseaseorAttack', text: "Have you ever been told you had a heart attack or coronary heart disease?", type: 'radio' },
+    { id: 'sleepHours', text: "On average, how many hours of sleep do you get in a 24-hour period?", type: 'number' },
+    { name: 'PhysActivity', text: "During the past 30 days, did you participate in any physical activity or exercise?", type: 'radio' },
+    { name: 'Fruits', text: "Do you usually eat fruit at least once per day?", type: 'radio' },
+    { name: 'Veggies', text: "Do you usually eat vegetables at least once per day?", type: 'radio' },
+    { name: 'HvyAlcoholConsump', text: "Do you participate in heavy drinking based on CDC guidelines?", type: 'radio' },
+    { name: 'AnyHealthcare', text: "Do you currently have any kind of healthcare coverage?", type: 'radio' }
+  ];
+
+  function speak(text, callback) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+    utterance.onend = () => {
+      if (callback && voiceActive) callback();
+    };
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function askCurrentQuestion() {
+    if (!voiceActive) return;
+    const q = questionsList[currentQuestionIndex];
+
+    // Highlight UI
+    document.querySelectorAll('.form-group').forEach(el => el.classList.remove('highlight-voice'));
+    let targetEl = null;
+
+    if (q.id) {
+      targetEl = document.getElementById(q.id);
+    } else if (q.name) {
+      targetEl = document.querySelector(`input[name="${q.name}"]`);
+    }
+
+    if (targetEl) {
+      const parent = targetEl.closest('.form-group');
+      if (parent) {
+        parent.classList.add('highlight-voice');
+        parent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    speak(q.text, () => {
+      if (voiceActive) {
+        try { recognition.start(); } catch (e) { }
+      }
+    });
+  }
+
+  recognition.onresult = (event) => {
+    if (!voiceActive) return;
+    const transcript = event.results[0][0].transcript.toLowerCase().trim();
+    const currentQ = questionsList[currentQuestionIndex];
+
+    let understood = false;
+
+    if (currentQ.type === 'number') {
+      if (transcript.includes('skip') && currentQ.optional) {
+        understood = true;
+      } else {
+        const match = transcript.match(/\d+/);
+        if (match) {
+          const num = parseInt(match[0], 10);
+          const input = document.getElementById(currentQ.id);
+          input.value = num;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          understood = true;
+        }
+      }
+    } else if (currentQ.type === 'radio') {
+      if (transcript.includes('yes') || transcript.includes('yeah') || transcript.includes('yep')) {
+        const rad = document.querySelector(`input[name="${currentQ.name}"][value="true"]`);
+        if (rad) {
+          rad.checked = true;
+          rad.dispatchEvent(new Event('change', { bubbles: true }));
+          understood = true;
+        }
+      } else if (transcript.includes('no') || transcript.includes('nope') || transcript.includes('nah') || transcript.includes('not')) {
+        const rad = document.querySelector(`input[name="${currentQ.name}"][value="false"]`);
+        if (rad) {
+          rad.checked = true;
+          rad.dispatchEvent(new Event('change', { bubbles: true }));
+          understood = true;
+        }
+      }
+    }
+
+    if (understood) {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questionsList.length) {
+        setTimeout(askCurrentQuestion, 600);
+      } else {
+        document.querySelectorAll('.form-group').forEach(el => el.classList.remove('highlight-voice'));
+
+        // Ensure consent is checked if they made it this far
+        const consentCheckbox = document.getElementById('dataConsent');
+        if (consentCheckbox && !consentCheckbox.checked) {
+          consentCheckbox.checked = true;
+          consentCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        speak("Thank you. Please review your answers and click Run Risk Estimate to see your results.");
+        stopVoiceGuided();
+      }
+    } else {
+      speak("I didn't quite catch that. " + currentQ.text, () => {
+        if (voiceActive) try { recognition.start(); } catch (e) { }
+      });
+    }
+  };
+
+  recognition.onerror = (event) => {
+    if (event.error === 'no-speech' && voiceActive) {
+      // Ask again if no speech detected
+      askCurrentQuestion();
+    } else {
+      console.error('Speech recognition error', event.error);
+      stopVoiceGuided();
+    }
+  };
+
+  recognition.onend = () => {
+    // Some browsers stop recognition constantly. Re-trigger if still active and not waiting for speech logic.
+    // The recognition is normally restarted by the speak() callback.
+  };
+
+  function startVoiceGuided() {
+    window.speechSynthesis.cancel();
+    voiceActive = true;
+    voiceBtn.classList.add('is-listening');
+    voiceBtnText.textContent = 'Voice Active';
+    currentQuestionIndex = 0;
+
+    // Auto-scroll to top
+    document.getElementById('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    speak("I am your automated health assistant. I will read you the questions now.", askCurrentQuestion);
+  }
+
+  function stopVoiceGuided() {
+    voiceActive = false;
+    try { recognition.stop(); } catch (e) { }
+    window.speechSynthesis.cancel();
+    voiceBtn.classList.remove('is-listening');
+    voiceBtnText.textContent = 'Voice Mode';
+    document.querySelectorAll('.form-group').forEach(el => el.classList.remove('highlight-voice'));
+  }
+
+  voiceBtn.addEventListener('click', () => {
+    if (voiceActive) {
+      stopVoiceGuided();
+    } else {
+      startVoiceGuided();
+    }
+  });
+
 })();

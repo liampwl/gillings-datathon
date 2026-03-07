@@ -83,6 +83,7 @@
         <span class="top-bar__title">BRFSS<span class="top-bar__title--accent">&nbsp;2.0</span></span>
       </div>
       <nav class="top-bar__nav">
+        <div id="google_translate_element" class="hide-on-print"></div>
         <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
           <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -172,14 +173,25 @@
     <section class="tool-panel" id="toolPanel">
 
       <div class="card card--form" id="formCard">
-        <div class="card__header">
-          <div class="card__header-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5" />
-              <path d="M6 7h8M6 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-            </svg>
+        <div class="card__header" style="justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="card__header-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5" />
+                <path d="M6 7h8M6 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+            </div>
+            <h2 class="card__title">Tell Us About Your Health</h2>
           </div>
-          <h2 class="card__title">Tell Us About Your Health</h2>
+          <button type="button" id="voiceBtn" class="btn-voice" aria-label="Start Voice Assistant">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" x2="12" y1="19" y2="22" />
+            </svg>
+            <span id="voiceBtnText">Voice Mode</span>
+          </button>
         </div>
 
         <form id="riskForm" novalidate autocomplete="off">
@@ -282,7 +294,14 @@
 
             <div class="form-row form-row--toggles">
               <div class="form-group form-group--toggle" id="formGroupStroke">
-                <label>Have you ever been told you had a stroke?</label>
+                <label>Have you ever been told you had a <span class="tooltip-term" tabindex="0"
+                    data-tooltip="A sudden interruption of blood flow to the brain">stroke<svg class="tooltip-icon"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg></span>?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="Stroke" value="true" required />
@@ -295,7 +314,14 @@
                 </div>
               </div>
               <div class="form-group form-group--toggle" id="formGroupHeartDisease">
-                <label>Have you ever been told you had a heart attack or coronary heart disease?</label>
+                <label>Have you ever been told you had a heart attack or <span class="tooltip-term" tabindex="0"
+                    data-tooltip="Also known as clogged arteries">coronary heart disease<svg class="tooltip-icon"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg></span>?</label>
                 <div class="toggle-group">
                   <label class="toggle-option">
                     <input type="radio" name="HeartDiseaseorAttack" value="true" required />
@@ -420,7 +446,14 @@
             </svg>
             <span>Run Risk Estimate</span>
           </button>
-          <p class="form-submit-hint">Generate your Type 2 Diabetes Risk Score</p>
+          <div class="form-submit-hint">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span><strong>Secure &amp; Anonymous</strong> • Generate your Type 2 Diabetes Risk Score</span>
+          </div>
         </form>
 
         <!-- Form progress bar -->
@@ -630,6 +663,20 @@
   </footer>
 
   <script src="app.js"></script>
+
+  <!-- Google Translate Machine Translation -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,es',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript"
+    src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>

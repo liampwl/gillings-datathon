@@ -116,6 +116,81 @@ app.post('/predict', (req, res) => {
 });
 
 /**
+ * ============================================================================
+ * 🌲 RANDOM FOREST (ENSEMBLE) IN JAVASCRIPT
+ * ============================================================================
+ * DORMANT / UNUSED FOR NOW, BUT FULLY IMPLEMENTED FOR FUTURE PHASES.
+ * 
+ * Yes, you can run Random Forests entirely natively in Javascript! 
+ * Scikit-learn (Python) models can easily be exported to JSON and traversed in 
+ * Node.js without any heavyweight Python servers. Below is the tree-traversal architecture.
+ */
+
+class RandomForestClassifier {
+  constructor(treesJson) {
+    this.trees = treesJson; // Array of decision tree objects
+  }
+
+  // Traverse a single decision tree
+  traverseTree(node, features) {
+    if (node.isLeaf) {
+      return node.probability;
+    }
+    const val = features[node.feature];
+    if (val <= node.threshold) {
+      return this.traverseTree(node.left, features);
+    } else {
+      return this.traverseTree(node.right, features);
+    }
+  }
+
+  // Ensemble prediction: Average probabilities across all trees in the forest
+  predict(features) {
+    if (!this.trees || this.trees.length === 0) return 0;
+
+    let sumProb = 0;
+    for (const tree of this.trees) {
+      sumProb += this.traverseTree(tree, features);
+    }
+    return sumProb / this.trees.length; // Average probability ensemble
+  }
+}
+
+/**
+ * POST /predict-rf (Dormant Endpoint)
+ * 
+ * Placeholder endpoint to show how we easily transition from Logistic Regression
+ * to a Random Forest simply by pointing to a different JSON model architecture.
+ */
+app.post('/predict-rf', (req, res) => {
+  const body = req.body;
+
+  // In reality, this would read `model/rf_trees.json` exported from Python
+  const DUMMY_TREES = [];
+
+  const rfModel = new RandomForestClassifier(DUMMY_TREES);
+
+  // Parse inputs (same mapping validation as logistic regression)
+  const coeffs = getCoefficients();
+  const featureKeys = Object.keys(coeffs).filter((k) => k !== 'intercept');
+  const values = {};
+  for (const key of featureKeys) {
+    values[key] = toNumeric(body[key]);
+  }
+
+  // Predict probability via JS ensemble averaging
+  const probability = rfModel.predict(values);
+  const riskCategory = getRiskCategory(probability);
+
+  res.json({
+    model: "Random Forest",
+    probability: parseFloat(probability.toFixed(4)),
+    riskCategory
+  });
+});
+// ============================================================================
+
+/**
  * Helper: HTTPS GET that returns parsed JSON (works on Node 16+, no fetch needed).
  */
 function httpsGetJson(url) {
